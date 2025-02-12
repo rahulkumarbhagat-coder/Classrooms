@@ -1,7 +1,42 @@
 
 function GenerateQuizForm() {
+
+    const handleSubmit = async(e) => {
+        e.preventDefault();
+
+        try {
+            const topic = e.target.elements.quizTopic.value;
+            const difficulty = e.target.elements.quizDifficulty.value;
+            const type = e.target.elements.quizType.value;
+            const questions = e.target.elements.questions.value;
+
+            const quizDetails = {
+                topic,
+                difficulty,
+                type,
+                questions
+            }
+
+            console.log(quizDetails);
+
+            const response = await fetch('http://localhost:5000/quiz/create', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ quizDetails })
+            });
+
+            if(!response.ok) {
+                throw new Error('Failed to create test')
+            }
+        } catch (error) {
+            console.error('Error creating the quiz:', error)
+        }
+    }
+    
     return (
-        <div className="w-xl">
+        <div className="w-full md:w-[600px] mx-auto px-4 md:px-0">
             <div className="rounded-xl shadow-lg overflow-hidden">
             {/* Header Section */}
             <div className="bg-emerald-600 px-6 py-4">
@@ -10,7 +45,7 @@ function GenerateQuizForm() {
                 </h2>
             </div>
 
-            <form className="p-6 space-y-6">
+            <form onSubmit={handleSubmit} className="p-6 space-y-6">
                 
                 {/* Quiz Topic */}
                 <div className="space-y-2">
@@ -24,6 +59,7 @@ function GenerateQuizForm() {
                         className="w-full px-4 py-2 rounded-lg border focus:ring-emerald-500"
                         placeholder="Enter the subject or topic"
                         id="quiz-topic"
+                        name="quizTopic"
                     />
                 </div>
 
@@ -36,7 +72,8 @@ function GenerateQuizForm() {
                     </label>
                     <select 
                         className="w-full px-4 py-2 rounded-lg border focus:ring-emerald-500"
-                        id="quiz-difficulty">
+                        id="quiz-difficulty"
+                        name="quizDifficulty">
                             <option value="easy">Easy</option>
                             <option value="medium">Medium</option>
                             <option value="hard">Hard</option>
@@ -52,10 +89,12 @@ function GenerateQuizForm() {
                     </label>
                     <select 
                         className="w-full px-4 py-2 rounded-lg border focus:ring-emerald-500"
-                        id="quiz-type">
+                        id="quiz-type"
+                        name="quizType">
                             <option value="multiple-choice">Multiple Choice</option>
                             <option value="true-false">True/False</option>
-                            <option value="short-answer">Short Answer</option>
+                            <option value="written">Written</option>
+                            <option value="mixture">Mixture</option>
                     </select>
                 </div>
 
@@ -63,7 +102,7 @@ function GenerateQuizForm() {
                 <div className="space-y-2">
                     <label 
                         className="block text-left text-sm px-1 font-bold text-gray-700"
-                        htmlFor="quiz-type">
+                        htmlFor="questions">
                             Number of Questions
                     </label>
                     <input
@@ -72,6 +111,8 @@ function GenerateQuizForm() {
                         max="50"
                         className="w-full px-4 py-2 rounded-lg border focus:ring-emerald-500"
                         placeholder="Enter number of questions"
+                        id="questions"
+                        name="questions"
                     />
                 </div>
 
