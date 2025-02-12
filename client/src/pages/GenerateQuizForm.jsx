@@ -36,7 +36,7 @@ function GenerateQuizForm() {
     }
     
     return (
-        <div className="w-full md:w-[600px] mx-auto px-4 md:px-0">
+        <div className="w-full md:w-[600px] mx-auto mt-5 px-4 md:px-0">
             <div className="rounded-xl shadow-lg overflow-hidden">
             {/* Header Section */}
             <div className="bg-emerald-600 px-6 py-4">

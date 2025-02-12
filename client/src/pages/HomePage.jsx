@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 function Homepage() {
     return (
         <>
-            <div className="mb-10 text-2xl">
+            <div className="my-10 text-7xl">
                 <h1>Welcome to our Quiz Generator!</h1>
             </div>
 
