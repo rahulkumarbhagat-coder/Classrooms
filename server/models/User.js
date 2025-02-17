@@ -22,7 +22,8 @@ const userSchema = new mongoose.Schema({
         trim: true
     },
     isTeacher: {
-        Boolean: false,
+        type: Boolean,
+        default: false,
         required: true
     },
     createdOn: {

@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.jsx'
 import GenerateQuizForm from './pages/GenerateQuizForm.jsx';
 import Homepage from './pages/HomePage.jsx';
+import Register from './pages/Register.jsx'
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
       {
         path: '/generate-quiz',
         element: <GenerateQuizForm />
+      },
+      {
+        path: '/register',
+        element: <Register />
       },
     ]
   }

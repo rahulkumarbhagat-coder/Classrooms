@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { quizRouter } from '../routes/quizRoute.js';
+import { authRouter } from '../routes/authRoutes.js';
 
 dotenv.config();
 
@@ -23,7 +24,8 @@ app.get('/', (req, res) => {
   res.json({ message: 'Welcome to your MERN application' });
 });
 
-app.use('/quiz', quizRouter)
+app.use('/quiz', quizRouter);
+app.use('/auth', authRouter);
 
 // Start server
 const PORT = process.env.PORT || 5000;
