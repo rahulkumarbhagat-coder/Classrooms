@@ -1,5 +1,11 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'
+import quizStore from '../store/quizStore';
 
 function GenerateQuizForm() {
+
+    const { newQuiz } = quizStore()
+    const navigate = useNavigate()
 
     const handleSubmit = async(e) => {
         e.preventDefault();
@@ -10,22 +16,24 @@ function GenerateQuizForm() {
             const type = e.target.elements.quizType.value;
             const questions = e.target.elements.questions.value;
 
-            const quizDetails = {
+            const userInput = {
                 topic,
                 difficulty,
                 type,
                 questions
             }
 
-            console.log(quizDetails);
-
-            const response = await fetch('http://localhost:5000/quiz/create', {
+            const response = await fetch('http://localhost:4000/quiz/create', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ quizDetails })
+                body: JSON.stringify({ userInput })
             });
+            const quiz = await response.json()
+            newQuiz(JSON.parse(quiz))
+            navigate('/display-quiz')
+            
 
             if(!response.ok) {
                 throw new Error('Failed to create test')
