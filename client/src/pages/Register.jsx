@@ -1,6 +1,8 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase/config"
 import { useState } from "react";
+import { Link } from "react-router-dom";
+
 
 function Register() {
 
@@ -184,6 +186,9 @@ function Register() {
                         Register
                     </button>
                 </div>
+
+                <Link to={'/login'} className="text-sm mb-4 hover:text-blue-700">Already have an account? Login!</Link>
+
             </form>        
         </div>
     );

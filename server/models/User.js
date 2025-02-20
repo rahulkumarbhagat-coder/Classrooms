@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    quizzes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Quiz'
+    }],
     classrooms: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Classroom'

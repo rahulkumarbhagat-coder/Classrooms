@@ -5,7 +5,7 @@ import { authMiddleware } from '../middleware/auth.js';
 export const authRouter = express.Router();
 
 // Register new user
-authRouter.post('/new-user', authMiddleware, async(req,res) =>{
+authRouter.post('/new-user', authMiddleware, async(req,res) => {
     try {
         const { uid, email } = req.user;
 
@@ -36,4 +36,4 @@ authRouter.post('/new-user', authMiddleware, async(req,res) =>{
         console.error('Error creating user:', error);
         res.status(500).json({error: 'Error creating user'});
     }
-})
+});
