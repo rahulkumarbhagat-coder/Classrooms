@@ -37,3 +37,21 @@ authRouter.post('/new-user', authMiddleware, async(req,res) => {
         res.status(500).json({error: 'Error creating user'});
     }
 });
+
+// Get existing user
+authRouter.get('/user', authMiddleware, async(req,res) => {
+    try {
+        const { uid } = req.user;
+
+        const user = await User.findOne({ firebaseUid: uid });
+        if(!user) {
+            return res.status(400).json({ error: 'User not found' });
+        }
+
+        console.log(user);
+        res.status(200).json(user);
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.status(500).json({error: 'Error fetching user'});
+    }
+});
