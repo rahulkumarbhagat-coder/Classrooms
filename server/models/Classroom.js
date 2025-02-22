@@ -3,15 +3,14 @@ import mongoose from 'mongoose';
 const classroomSchema = new mongoose.Schema({
     name: {
         type: String,
-        enum: ['easy', 'medium', 'hard'],
         required: true
     },
     description: {
         type: String,
     },
     teachers: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        type: String,
+        required: true,
     }],
     students: [{
         type: mongoose.Schema.Types.ObjectId,

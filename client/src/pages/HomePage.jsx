@@ -1,10 +1,23 @@
 
 import { Link } from "react-router-dom";
 import { useAuth } from "../utils/authUtils";
+import { getAuth, signOut } from "firebase/auth";
 
 function Homepage() {
 
     const { userData } = useAuth();
+
+    console.log('userData', userData);
+
+    const handleLogout = async () => {
+        const auth = getAuth();
+        try {
+            await signOut(auth);
+            window.location.reload();
+        } catch (error) {
+            console.log("Error signing out", error);
+        }
+    }
     
     return (
         <>
@@ -17,12 +30,23 @@ function Homepage() {
                     to={'/generate-quiz'}
                     className="w-full bg-emerald-600 text-white hover:bg-emerald-700 py-3 px-6 rounded-lg font-medium">
                     Generate a Quiz!
-                </Link>                
-                <Link 
-                    to={'/login'}
-                    className="w-full bg-emerald-600 text-white hover:bg-emerald-700 py-3 px-6 rounded-lg font-medium">
-                    Login
-                </Link>   
+                </Link>     
+
+                {/* Conditional render for Login/Logout button   */}
+                { userData.user ? (
+                    <button
+                        onClick={handleLogout}
+                        className="w-full bg-emerald-600 text-white hover:bg-emerald-700 py-3 px-6 rounded-lg font-medium">
+                        Logout
+                    </button>
+                    ) : (
+                    <Link 
+                        to={'/login'}
+                        className="w-full bg-emerald-600 text-white hover:bg-emerald-700 py-3 px-6 rounded-lg font-medium">
+                        Login
+                    </Link>
+                    )}        
+
                 <Link 
                     to={'/create-classroom'}
                     className="w-full bg-emerald-600 text-white hover:bg-emerald-700 py-3 px-6 rounded-lg font-medium">
@@ -31,7 +55,7 @@ function Homepage() {
 
             </div>
         </>  
-        );
+    );
 }
 
 export default Homepage;

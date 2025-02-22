@@ -1,6 +1,7 @@
 import express from "express";
 import { Classroom } from '../models/Classroom.js';
 import { authMiddleware } from '../middleware/auth.js';
+import { User } from '../models/User.js';
 
 export const classRouter = express.Router();
 
@@ -26,10 +27,23 @@ classRouter.post('/new-classroom', authMiddleware, async(req,res) => {
         const newClassroom = await Classroom.create({
             name,
             description,
-            teachers: [uid],
+            teachers: [uid.toString()],
             students: [],
             quizzes: []
-        })
+        });
+
+        const user = await User.findOne({ firebaseUid: uid });
+
+        if(!user) {
+            return res.status(404).json({ error: 'User not found'});    
+        }
+
+        // Update user's classrooms array
+        await User.findByIdAndUpdate(
+            user._id,
+            { $push: { classrooms: newClassroom._id } },
+            { new: true }
+        );
 
         res.status(201).json(newClassroom);
     } catch (error) {

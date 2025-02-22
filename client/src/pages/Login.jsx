@@ -9,7 +9,7 @@ function Login() {
 
         try {
             await signInWithEmailAndPassword( auth, e.target.elements.email.value, e.target.elements.password.value);
-            alert('Welcome back!')
+                window.location.href = '/';
         } catch(error) {
             console.error('Login error:', error);
         }

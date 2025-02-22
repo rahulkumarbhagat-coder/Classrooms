@@ -1,10 +1,21 @@
+import { useAuth } from "../utils/authUtils";
 
 function CreateClassroom() {
+
+    const { userData } = useAuth();
 
     const handleSubmit = async(e) => {
         e.preventDefault();
 
-        console.log('Creating classroom...');
+        if(!userData.user) {
+            console.error('User not logged in');
+            return;
+        } else if(userData.isTeacher === false) {
+            console.error('User does not have access to create classroom');
+            alert('You do not have access to create a classroom');
+            return;
+        }
+
         try {
             const name = e.target.elements.name.value;
             const description = e.target.elements.description.value;
@@ -16,23 +27,28 @@ function CreateClassroom() {
 
             console.log('CD: ',classDetails);
 
+
+            const token = await userData.user.getIdToken();
+            
             const response = await fetch('http://localhost:5000/class/new-classroom', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({ classDetails })
             });
 
-            console.log(response)
+            console.log(await response.json())
 
-            if(!response.ok) {
+            if(!response.ok) { 
                 throw new Error('Failed to create test')
             }
-
-            alert('Classroom created successfully!')
+            alert(`${classDetails.name} classroom created successfully!`);
+            e.target.reset();
+            
         } catch (error) {
-            console.error('Error creating the quiz:', error)
+            console.error('Error creating classroom:', error)
         }
     }
     
@@ -53,7 +69,7 @@ function CreateClassroom() {
                         <label 
                             className="block text-left text-sm px-1 font-bold text-gray-700"
                             htmlFor="name">
-                            Class title
+                                Class title
                         </label>
                         <input
                             type="text"
@@ -61,6 +77,7 @@ function CreateClassroom() {
                             placeholder="Enter the subject or topic"
                             id="name"
                             name="name"
+                            required
                         />
                     </div>
 

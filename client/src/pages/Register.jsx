@@ -71,7 +71,10 @@ function Register() {
             const data = await response.json();
             console.log(data);
 
-            alert('User created successfully!')
+            window.confirm('User created successfully!');
+            if(confirm.okay) {
+                window.location.href = '/home';
+            }
         } catch(error) {
             console.error('Registration error:', error);
             setErrors(prev => ({
