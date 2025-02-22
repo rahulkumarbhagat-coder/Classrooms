@@ -10,6 +10,7 @@ const DisplayQuiz = () => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [userAnswers, setUserAnswers] = useState({})
     const [laterCheck, setLaterCheck] = useState({})
+    const [timeLeft, setTimeLeft] = useState(120);
     const navigate = useNavigate()
     
     useEffect(()=>{
@@ -24,6 +25,27 @@ const DisplayQuiz = () => {
       const { quiz_details, quiz_questions } = quizData;
       const currentQuestion = quiz_questions[currentQuestionIndex];
     
+
+    //timer
+    useEffect(()=>{
+      if (timeLeft < 0) {
+         answerCheck()
+        return;
+      }
+  
+      const timer = setTimeout(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+  
+      return ()=> clearTimeout(timer)
+    }, [timeLeft])
+    
+    const quizTimer = () => {
+      if (timeLeft < 0) {return "0 : 00"}
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      return `${minutes} : ${seconds < 10 ? "0" : ""}${seconds}`;
+    };
   
     //for T/F & mcq submission
     const handleAnswerSelect = (question_number, selectedOption) =>{
@@ -93,6 +115,7 @@ const DisplayQuiz = () => {
       <div className="absolute top-0 left-0 w-1/2 h-1/2 bg-green-500 opacity-20 rounded-full blur-3xl"></div>
       <div className="absolute bottom-0 right-0 w-1/3 h-1/3 bg-green-600 opacity-30 rounded-full blur-3xl"></div>
       
+      <h1 className="text-2xl font-bold text-center text-white">Time Left : {quizTimer()}</h1>
       <motion.div 
         initial={{ opacity: 0, y: -20 }} 
         animate={{ opacity: 1, y: 0 }} 
