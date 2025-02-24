@@ -10,6 +10,8 @@ import Login from './pages/AuthPages/Login.jsx'
 import CreateClassroom from './pages/ClassroomPages/CreateClassroom.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import JoinClassroom from './pages/ClassroomPages/JoinClassroom.jsx';
+import DisplayQuiz from './pages/DisplayQuiz.jsx';
+import Result from './pages/Result.jsx';
 
 const router = createBrowserRouter([
   {
@@ -40,6 +42,14 @@ const router = createBrowserRouter([
         path: '/join-classroom',
         element: <JoinClassroom />
       },
+      {
+        path: '/display-quiz',
+        element: <DisplayQuiz />
+      },
+      {
+        path: '/display-result',
+        element: <Result />
+      }
     ]
   }
 ])
