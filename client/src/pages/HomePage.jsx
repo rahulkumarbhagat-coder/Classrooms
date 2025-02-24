@@ -32,7 +32,7 @@ function Homepage() {
                     Generate a Quiz!
                 </Link>     
 
-                {/* Conditional render for Login/Logout button   */}
+                {/* Login/Logout button   */}
                 { userData.user ? (
                     <button
                         onClick={handleLogout}
@@ -45,13 +45,22 @@ function Homepage() {
                         className="w-full bg-emerald-600 text-white hover:bg-emerald-700 py-3 px-6 rounded-lg font-medium">
                         Login
                     </Link>
-                    )}        
+                    )}       
 
-                <Link 
-                    to={'/create-classroom'}
-                    className="w-full bg-emerald-600 text-white hover:bg-emerald-700 py-3 px-6 rounded-lg font-medium">
-                    Create Classroom
-                </Link>     
+                {/* Create/Join Classroom button   */}
+                { userData.isTeacher ? (
+                    <Link 
+                        to={'/create-classroom'}
+                        className="w-full bg-emerald-600 text-white hover:bg-emerald-700 py-3 px-6 rounded-lg font-medium">
+                        Create Classroom
+                    </Link>
+                    ) : (
+                    <Link 
+                        to={'/join-classroom'}
+                        className="w-full bg-emerald-600 text-white hover:bg-emerald-700 py-3 px-6 rounded-lg font-medium">
+                        Join Classroom
+                    </Link>
+                    )}       
 
             </div>
         </>  

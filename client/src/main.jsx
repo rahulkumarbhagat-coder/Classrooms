@@ -5,10 +5,11 @@ import './index.css'
 import App from './App.jsx'
 import GenerateQuizForm from './pages/GenerateQuizForm.jsx';
 import Homepage from './pages/HomePage.jsx';
-import Register from './pages/Register.jsx'
-import Login from './pages/Login.jsx'
-import CreateClassroom from './pages/CreateClassroom.jsx';
+import Register from './pages/AuthPages/Register.jsx'
+import Login from './pages/AuthPages/Login.jsx'
+import CreateClassroom from './pages/ClassroomPages/CreateClassroom.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
+import JoinClassroom from './pages/ClassroomPages/JoinClassroom.jsx';
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: '/create-classroom',
         element: <CreateClassroom />
+      },
+      {
+        path: '/join-classroom',
+        element: <JoinClassroom />
       },
     ]
   }

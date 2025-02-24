@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { AuthContext } from "../utils/authUtils";
 import { auth } from '../firebase/config';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
 
 // eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
                 });
     
                 if (!response.ok) {
-                    console.log("RESPONSE NOT OK");
+                    console.log("User not found");
                     setUserData(prev => ({
                         ...prev,
                         user: null,
@@ -75,8 +75,30 @@ export const AuthProvider = ({ children }) => {
         return () => unsubscribe();
     }, []);
 
+    const handleLogin = async (email, password) => {
+        setUserData(prev => ({
+            ...prev,
+            loading: true
+        }));
+        try {
+            const user = await signInWithEmailAndPassword( auth,email,password);
+            setUserData(prev => ({
+                ...prev,
+                user: user.user 
+            }));
+            window.location.href = '/';
+        } catch(error) {
+            console.error('Login error:', error);
+        } finally {
+            setUserData(prev => ({
+                ...prev,
+                loading: false
+            }));
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ userData }}>
+        <AuthContext.Provider value={{ userData, handleLogin }}>
             {children}
         </AuthContext.Provider>
     );

@@ -1,20 +1,23 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase/config"
+import { auth } from "../../firebase/config"
 import { useState } from "react";
 import { Link } from "react-router-dom";
-
+import { useAuth } from "../../utils/authUtils";
 
 function Register() {
+
+    const { handleLogin } = useAuth();
 
     const [formData, setFormData] = useState({
         email: '',
         firstName: '',
         lastName: '',
         password: '',
+        confirmPassword: '',
         role: 'student'
     });
 
-    const [errors, setErrors] = useState({});
+    const [error, setError] = useState(null);
 
     const handleChange = (e) => {
         const { id, value } = e.target;
@@ -22,25 +25,25 @@ function Register() {
             ...prev,
             [id]: value
         }));
-
-        // Form validation
-        if(id === 'password' && value.length < 6) {
-            setErrors(prev => ({
-                ...prev,
-                password: 'Password must be at least 6 charachters'
-            }));
-        } else {
-            setErrors(prev => ({
-                ...prev,
-                [id]: ''
-            }));
-        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("Registering user", formData);
+
+        // Validate matching passwords
+        if(formData.password !== formData.confirmPassword) {
+            setError('Passwords do not match');
+            console.log("Passwords do not match")
+            return;
+        } else if (formData.password.length < 6) {
+            setError('Password must be at least 6 characters');
+            console.log("Password must be at least 6 characters")   
+            return;
+        }
 
         try {
+            setError(null);
             // Create Firebase user
             const userCredential = await createUserWithEmailAndPassword(
                 auth, formData.email, formData.password
@@ -60,7 +63,7 @@ function Register() {
                 body: JSON.stringify({
                     firstName: formData.firstName,
                     lastName: formData.lastName,
-                    role: formData.role.toLowerCase()
+                    isTeacher: formData.role === 'Teacher' ? true : false
                 })
             });
 
@@ -71,16 +74,17 @@ function Register() {
             const data = await response.json();
             console.log(data);
 
+            // Log in user
+            handleLogin(formData.email, formData.password);
+
+            // Log in success message before redirecting home
             window.confirm('User created successfully!');
             if(confirm.okay) {
                 window.location.href = '/home';
             }
         } catch(error) {
             console.error('Registration error:', error);
-            setErrors(prev => ({
-                ...prev,
-                submit: error.message
-            }));
+            setError(error.message);
         }
     };
     
@@ -103,7 +107,8 @@ function Register() {
                             type="text"
                             value={formData.firstName}
                             onChange={handleChange}
-                            placeholder="Jane">
+                            placeholder="Jane"
+                            required>
                         </input>
                     </div>
                     <div className="w-full md:w-1/2 px-3">
@@ -116,7 +121,8 @@ function Register() {
                             value={formData.lastName}
                             onChange={handleChange}
                             type="text" 
-                            placeholder="Doe">
+                            placeholder="Doe"
+                            required>
                         </input>
                     </div>
                 </div>
@@ -133,7 +139,8 @@ function Register() {
                             type="email"
                             value={formData.email}
                             onChange={handleChange}
-                            placeholder="Student@gmail.com">
+                            placeholder="Student@gmail.com"
+                            required>
                         </input>
                     </div>
                 </div>
@@ -151,7 +158,26 @@ function Register() {
                             type="password" 
                             value={formData.password}
                             onChange={handleChange}
-                            placeholder="***********">
+                            placeholder="Enter your password"
+                            required>
+                        </input>
+                    </div>
+                </div>
+
+                {/* Confirm password input */}
+                <div className="flex flex-wrap -mx-3 mb-6">
+                    <div className="w-full px-3">
+                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="confirmPassword">
+                            Confirm Password
+                        </label>
+                        <input 
+                            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
+                            id="confirmPassword" 
+                            type="password"
+                            value={formData.confirmPassword}
+                            onChange={handleChange} 
+                            placeholder="Confirm your password"
+                            required>
                         </input>
                     </div>
                 </div>
@@ -177,8 +203,8 @@ function Register() {
                     </div>
                 </div>
 
-                {errors.submit && (
-                    <div className="text-red-500 text-sm mb-4">{errors.submit}</div>
+                {error && (
+                    <div className="text-red-500 text-sm mb-4">{error}</div>
                 )}
 
                 <div className="flex justify-end">

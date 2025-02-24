@@ -16,6 +16,11 @@ const classroomSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
+    inviteCode: {
+        type: String,
+        unique: true,
+        required: true
+    },
     quizzes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Quiz'

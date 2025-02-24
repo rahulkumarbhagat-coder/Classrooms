@@ -1,18 +1,14 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase/config"
 import { Link } from "react-router-dom";
+import { useAuth } from "../../utils/authUtils";
 
 function Login() {
+    
+    const { handleLogin } = useAuth();
 
+    // Log user in with AuthContext handleLogin function
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        try {
-            await signInWithEmailAndPassword( auth, e.target.elements.email.value, e.target.elements.password.value);
-                window.location.href = '/';
-        } catch(error) {
-            console.error('Login error:', error);
-        }
+        handleLogin(e.target.elements.email.value, e.target.elements.password.value);
     };
     
     return (

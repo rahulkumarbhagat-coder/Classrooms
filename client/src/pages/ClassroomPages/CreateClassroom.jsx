@@ -1,4 +1,4 @@
-import { useAuth } from "../utils/authUtils";
+import { useAuth } from "../../utils/authUtils";
 
 function CreateClassroom() {
 
@@ -17,8 +17,8 @@ function CreateClassroom() {
         }
 
         try {
-            const name = e.target.elements.name.value;
-            const description = e.target.elements.description.value;
+            const name = e.target.elements.name.value.trim();
+            const description = e.target.elements.description.value.trim();
 
             const classDetails = {
                 name,

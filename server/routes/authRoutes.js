@@ -15,8 +15,8 @@ authRouter.post('/new-user', authMiddleware, async(req,res) => {
         }
 
         // Get user info from req body and validate required fields
-        const { firstName, lastName, role } = req.body;
-        if(!firstName || !lastName || !role ) {
+        const { firstName, lastName, isTeacher } = req.body;
+        if(!firstName || !lastName || isTeacher === undefined) {
             return res.status(400).json({ error: 'Please provide firstName, lastName, and role'});
         }
 
@@ -26,7 +26,7 @@ authRouter.post('/new-user', authMiddleware, async(req,res) => {
             email,
             firstName,
             lastName,
-            role,
+            isTeacher,
             classrooms: [],
             quizHistory: []
         })
