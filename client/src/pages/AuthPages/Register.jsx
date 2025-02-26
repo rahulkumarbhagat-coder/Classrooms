@@ -6,6 +6,8 @@ import { useAuth } from "../../utils/authUtils";
 
 function Register() {
 
+    const apiUrl = import.meta.env.VITE_API_URL;
+
     const { handleLogin } = useAuth();
 
     const [formData, setFormData] = useState({
@@ -54,7 +56,7 @@ function Register() {
             
             // Get authentication token
             const token = await firebaseUser.getIdToken();
-            const response = await fetch('http://localhost:5000/auth/new-user', {
+            const response = await fetch(`${apiUrl}/auth/new-user`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

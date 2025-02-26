@@ -2,6 +2,8 @@ import { useAuth } from "../../utils/authUtils";
 
 function JoinClassroom() {
 
+    const apiUrl = import.meta.env.VITE_API_URL;
+
     const { userData } = useAuth();
 
     const handleSubmit = async(e) => {
@@ -24,7 +26,7 @@ function JoinClassroom() {
 
             const token = await userData.user.getIdToken();
             
-            const response = await fetch('http://localhost:5000/class/join-classroom', {
+            const response = await fetch(`${apiUrl}/class/join-classroom`, {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',

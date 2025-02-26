@@ -3,13 +3,18 @@ import { useAuth } from "../../utils/authUtils";
 
 function Login() {
     
-    const { handleLogin } = useAuth();
+    const { handleLogin, signInWithGoogle } = useAuth();
 
     // Log user in with AuthContext handleLogin function
     const handleSubmit = async (e) => {
         e.preventDefault();
         handleLogin(e.target.elements.email.value, e.target.elements.password.value);
     };
+
+    // const googleSignIn = async (e) => {
+    //     e.preventDefault();
+    //     signInWithGoogle();
+    // }
     
     return (
         <div className="w-full bg-slate-300 md:w-[600px] mx-auto mt-5 px-4 py-5 rounded-xl shadow-lg md:px-0">
@@ -18,6 +23,8 @@ function Login() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                
+                <button type="button" onClick={signInWithGoogle}>Google</button>
 
                 {/* Email input */}
                 <div className="flex flex-wrap -mx-3 mb-6">
