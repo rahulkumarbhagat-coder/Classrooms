@@ -23,7 +23,7 @@ function GenerateQuizForm() {
                 questions
             }
 
-            const response = await fetch('http://localhost:4000/quiz/create', {
+            const response = await fetch('https://quiz-generator-k60h.onrender.com/quiz/create', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',

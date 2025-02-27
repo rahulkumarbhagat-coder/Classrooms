@@ -9,7 +9,6 @@ const DisplayQuiz = () => {
     const {newResults} = quizStore()
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [userAnswers, setUserAnswers] = useState({})
-    const [laterCheck, setLaterCheck] = useState({})
     const [timeLeft, setTimeLeft] = useState(120);
     const navigate = useNavigate()
     
@@ -17,9 +16,6 @@ const DisplayQuiz = () => {
       console.log(quizData);
     },[quizData])
 
-    useEffect(()=>{
-      console.log(laterCheck);
-    },[laterCheck])
 
     //quiz details
       const { quiz_details, quiz_questions } = quizData;
@@ -78,9 +74,10 @@ const DisplayQuiz = () => {
 
 
     //answer checking
-    const answerCheck = () =>{
+    const answerCheck = async() =>{
+      navigate('/display-result')
       let score = 0;
-      let result = quiz_questions.map((question)=>{
+      let result = await Promise.all(quiz_questions.map(async(question)=>{
         let isCorrect = false
         const userAnswer = userAnswers[question.question_number]
         if (question.question_type === 'True/False' || question.question_type === 'MCQ') {
@@ -88,24 +85,34 @@ const DisplayQuiz = () => {
         }
 
         else if (question.question_type === 'Written') {
-          setLaterCheck(prev=>({
-            ...prev,
-            [question.question_number]: userAnswer
-          }))
+          const response = await fetch(`https://quiz-generator-k60h.onrender.com/quiz/check`, {
+            method: 'POST',
+            headers:{
+              'Content-type': "application/json",
+            },
+            body: JSON.stringify({
+              userAnswer:{
+                question: question.question_text,
+                answer: userAnswer
+              },
+              totalMarks: 5
+            })
+          })
+          const result = await response.json()
+          isCorrect = result.isCorrect
+          console.log(result);
         }
 
         if (isCorrect) score++
 
         return {question: question.question_text, userAnswer, isCorrect}
-      })
+      }))
       console.log("Quiz results", result);
       console.log(`Score : ${score}/${quiz_questions.length}`);
       newResults({
         quizResults: result,
         score: `${score}/${quiz_questions.length}`
       })
-      
-      navigate('/display-result')
     }
   
     return (
