@@ -111,7 +111,9 @@ const DisplayQuiz = () => {
       console.log(`Score : ${score}/${quiz_questions.length}`);
       newResults({
         quizResults: result,
-        score: `${score}/${quiz_questions.length}`
+        score: `${score}/${quiz_questions.length}`,
+        correct: score,
+        inCorrect: quiz_questions.length - score
       })
     }
   

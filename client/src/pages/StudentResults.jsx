@@ -83,7 +83,7 @@ const QuizResults = () => {
       
       
       {/* Results Popup */}
-      {/* <div className="fixed inset-0 flex items-center justify-center bg-opacity-20">
+      <div className="fixed inset-0 flex items-center justify-center bg-opacity-20">
         <div className="bg-white text-black p-4 rounded-3xl shadow-lg w-90 relative flex flex-col items-center">
           <button className="absolute top-2 right-2 shadow-gray-700 shadow-2xl p-2 rounded-full font-bold">✕</button>
           <div className="text-6xl"><img src="military-medal.svg" alt="medal" /></div>
@@ -92,11 +92,11 @@ const QuizResults = () => {
           <p className="text-3xl font-bold">{result.score}</p>
           <div className="flex justify-between gap-2 mt-6 w-full px-4">
             <div className="bg-yellow-400 px-3 py-2 shadow-2xl rounded-lg text-white font-medium">{quizData.quiz_details.number_of_questions} Questions</div>
-            <div className="bg-green-500 px-3 py-2 shadow-2xl rounded-lg text-white font-medium">{result.score} Correct</div>
-            <div className="bg-red-500 px-3 py-2 shadow-2xl rounded-lg text-white font-medium">0 Incorrect</div>
+            <div className="bg-green-500 px-3 py-2 shadow-2xl rounded-lg text-white font-medium">{result.correct} Correct</div>
+            <div className="bg-red-500 px-3 py-2 shadow-2xl rounded-lg text-white font-medium">{result.inCorrect} Incorrect</div>
           </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };
