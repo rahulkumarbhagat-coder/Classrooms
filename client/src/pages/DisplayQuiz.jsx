@@ -9,21 +9,39 @@ const DisplayQuiz = () => {
     const {newResults} = quizStore()
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [userAnswers, setUserAnswers] = useState({})
-    const [laterCheck, setLaterCheck] = useState({})
+    const [timeLeft, setTimeLeft] = useState(120);
     const navigate = useNavigate()
     
     useEffect(()=>{
       console.log(quizData);
     },[quizData])
 
-    useEffect(()=>{
-      console.log(laterCheck);
-    },[laterCheck])
 
     //quiz details
       const { quiz_details, quiz_questions } = quizData;
       const currentQuestion = quiz_questions[currentQuestionIndex];
     
+
+    //timer
+    useEffect(()=>{
+      if (timeLeft < 0) {
+         answerCheck()
+        return;
+      }
+  
+      const timer = setTimeout(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+  
+      return ()=> clearTimeout(timer)
+    }, [timeLeft])
+    
+    const quizTimer = () => {
+      if (timeLeft < 0) {return "0 : 00"}
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      return `${minutes} : ${seconds < 10 ? "0" : ""}${seconds}`;
+    };
   
     //for T/F & mcq submission
     const handleAnswerSelect = (question_number, selectedOption) =>{
@@ -56,9 +74,10 @@ const DisplayQuiz = () => {
 
 
     //answer checking
-    const answerCheck = () =>{
+    const answerCheck = async() =>{
+      navigate('/display-result')
       let score = 0;
-      let result = quiz_questions.map((question)=>{
+      let result = await Promise.all(quiz_questions.map(async(question)=>{
         let isCorrect = false
         const userAnswer = userAnswers[question.question_number]
         if (question.question_type === 'True/False' || question.question_type === 'MCQ') {
@@ -66,24 +85,36 @@ const DisplayQuiz = () => {
         }
 
         else if (question.question_type === 'Written') {
-          setLaterCheck(prev=>({
-            ...prev,
-            [question.question_number]: userAnswer
-          }))
+          const response = await fetch(`https://quiz-generator-k60h.onrender.com/quiz/check`, {
+            method: 'POST',
+            headers:{
+              'Content-type': "application/json",
+            },
+            body: JSON.stringify({
+              userAnswer:{
+                question: question.question_text,
+                answer: userAnswer
+              },
+              totalMarks: 5
+            })
+          })
+          const result = await response.json()
+          isCorrect = result.isCorrect
+          console.log(result);
         }
 
         if (isCorrect) score++
 
         return {question: question.question_text, userAnswer, isCorrect}
-      })
+      }))
       console.log("Quiz results", result);
       console.log(`Score : ${score}/${quiz_questions.length}`);
       newResults({
         quizResults: result,
-        score: `${score}/${quiz_questions.length}`
+        score: `${score}/${quiz_questions.length}`,
+        correct: score,
+        inCorrect: quiz_questions.length - score
       })
-      
-      navigate('/display-result')
     }
   
     return (
@@ -93,6 +124,7 @@ const DisplayQuiz = () => {
       <div className="absolute top-0 left-0 w-1/2 h-1/2 bg-green-500 opacity-20 rounded-full blur-3xl"></div>
       <div className="absolute bottom-0 right-0 w-1/3 h-1/3 bg-green-600 opacity-30 rounded-full blur-3xl"></div>
       
+      <h1 className="text-2xl font-bold text-center text-white">Time Left : {quizTimer()}</h1>
       <motion.div 
         initial={{ opacity: 0, y: -20 }} 
         animate={{ opacity: 1, y: 0 }} 

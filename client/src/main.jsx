@@ -11,20 +11,21 @@ import CreateClassroom from './pages/ClassroomPages/CreateClassroom.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import JoinClassroom from './pages/ClassroomPages/JoinClassroom.jsx';
 import DisplayQuiz from './pages/DisplayQuiz.jsx';
+import StudentResults from './pages/StudentResults.jsx';
 import Result from './pages/Result.jsx';
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <App />,
     children: [
       {
         index: true,
-        element: <Homepage />
+        element: <Homepage />,
       },
       {
-        path: '/generate-quiz',
-        element: <GenerateQuizForm />
+        path: "/generate-quiz",
+        element: <GenerateQuizForm />,
       },
       {
         path: '/register',
@@ -47,17 +48,17 @@ const router = createBrowserRouter([
         element: <DisplayQuiz />
       },
       {
-        path: '/display-result',
-        element: <Result />
-      }
-    ]
-  }
-])
+        path: "/display-result",
+        element: <StudentResults />,
+      },
+    ],
+  },
+]);
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
       <RouterProvider router={router} />
     </AuthProvider>
   </StrictMode>,
-)
+);
