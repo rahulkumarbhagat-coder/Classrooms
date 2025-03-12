@@ -12,7 +12,6 @@ function Login() {
         handleLogin(e.target.elements.email.value, e.target.elements.password.value);
     };
 
-
     
     return (
         <div className="w-full bg-slate-300 md:w-[600px] mx-auto mt-5 px-4 py-5 rounded-xl shadow-lg md:px-0">
@@ -88,7 +87,7 @@ function Login() {
             </form>       
 
             {userData.showTypeModal && (
-                <div className="modal-overlay">
+                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/60">
                     <AccountTypeModal />
                 </div>
             )}
