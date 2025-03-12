@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../../utils/authUtils";
+import AccountTypeModal from "../../components/modals/AccountTypeModal";
 
 function Login() {
     
-    const { handleLogin, signInWithGoogle } = useAuth();
+    const { handleLogin, signInWithGoogle, userData } = useAuth();
 
     // Log user in with AuthContext handleLogin function
     const handleSubmit = async (e) => {
@@ -11,10 +12,7 @@ function Login() {
         handleLogin(e.target.elements.email.value, e.target.elements.password.value);
     };
 
-    // const googleSignIn = async (e) => {
-    //     e.preventDefault();
-    //     signInWithGoogle();
-    // }
+
     
     return (
         <div className="w-full bg-slate-300 md:w-[600px] mx-auto mt-5 px-4 py-5 rounded-xl shadow-lg md:px-0">
@@ -87,7 +85,13 @@ function Login() {
 
                 <Link to={'/register'} className="text-sm mb-4 hover:text-blue-700">Don&apos;t have an account? Register!</Link>
 
-            </form>        
+            </form>       
+
+            {userData.showTypeModal && (
+                <div className="modal-overlay">
+                    <AccountTypeModal />
+                </div>
+            )}
         </div>
     );
 }
