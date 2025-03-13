@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'
-import quizStore from '../store/quizStore';
-import QuizLoader from '../components/QuizLoader';
+import quizStore from '../../store/quizStore';
+import QuizLoader from '../../components/QuizLoader';
 
 function GenerateQuizForm() {
 
@@ -10,6 +10,7 @@ function GenerateQuizForm() {
     const [loading, setLoading] = useState(false)
     const [load, setLoad] = useState()
     const [image, setImage] = useState(false)
+    const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'
 
     const handleSubmit = async(e) => {
         e.preventDefault();
@@ -40,7 +41,7 @@ function GenerateQuizForm() {
                 setLoad(progress)
             },100)
 
-            const response = await fetch('http://localhost:4000/quiz/create', {
+            const response = await fetch(`${BASE_URL}/quiz/create`, {
                 method: 'POST',
                 body: userInput
             });

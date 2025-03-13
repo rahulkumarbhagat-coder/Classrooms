@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import quizStore from '../store/quizStore';
+import quizStore from '../../store/quizStore';
 import { useNavigate } from 'react-router-dom';
 
 const DisplayQuiz = () => {
@@ -11,6 +11,7 @@ const DisplayQuiz = () => {
     const [userAnswers, setUserAnswers] = useState({})
     const [timeLeft, setTimeLeft] = useState(120);
     const navigate = useNavigate()
+    const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'
     
     useEffect(()=>{
       console.log(quizData);
@@ -85,7 +86,7 @@ const DisplayQuiz = () => {
         }
 
         else if (question.question_type === 'Written') {
-          const response = await fetch(`https://quiz-generator-k60h.onrender.com/quiz/check`, {
+          const response = await fetch(`${BASE_URL}/quiz/check`, {
             method: 'POST',
             headers:{
               'Content-type': "application/json",

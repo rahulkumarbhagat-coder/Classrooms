@@ -3,16 +3,15 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css'
 import App from './App.jsx'
-import GenerateQuizForm from './pages/GenerateQuizForm.jsx';
+import GenerateQuizForm from './pages/QuizPages/GenerateQuizForm.jsx';
 import Homepage from './pages/HomePage.jsx';
 import Register from './pages/AuthPages/Register.jsx'
 import Login from './pages/AuthPages/Login.jsx'
 import CreateClassroom from './pages/ClassroomPages/CreateClassroom.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import JoinClassroom from './pages/ClassroomPages/JoinClassroom.jsx';
-import DisplayQuiz from './pages/DisplayQuiz.jsx';
-import StudentResults from './pages/StudentResults.jsx';
-import Result from './pages/Result.jsx';
+import DisplayQuiz from './pages/QuizPages/DisplayQuiz.jsx';
+import StudentResults from './pages/QuizPages/StudentResults.jsx';
 
 const router = createBrowserRouter([
   {

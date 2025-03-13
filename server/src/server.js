@@ -2,7 +2,7 @@ import express, { json } from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
-// import { quizRouter } from '../routes/quizRoute.js';
+import { quizRouter } from '../routes/quizRoute.js';
 import { authRouter } from '../routes/authRoutes.js';
 import { classRouter } from '../routes/classRoutes.js';
 
@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
   res.json({ message: 'Welcome to your MERN application' });
 });
 
-// app.use('/quiz', quizRouter);
+app.use('/quiz', quizRouter);
 app.use('/auth', authRouter);
 app.use('/class', classRouter);
 

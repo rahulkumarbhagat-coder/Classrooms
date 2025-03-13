@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import quizStore from "../store/quizStore";
+import quizStore from "../../store/quizStore";
 
 const QuizResults = () => {
   const {quizData} = quizStore()
