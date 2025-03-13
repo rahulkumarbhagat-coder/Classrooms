@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import quizStore from '../store/quizStore';
+import QuizLoader from '../components/QuizLoader';
 
 function GenerateQuizForm() {
 
     const { newQuiz } = quizStore()
     const navigate = useNavigate()
+    const [loading, setLoading] = useState(false)
+    const [load, setLoad] = useState()
+    const [image, setImage] = useState(false)
 
     const handleSubmit = async(e) => {
         e.preventDefault();
@@ -16,23 +20,47 @@ function GenerateQuizForm() {
             const type = e.target.elements.quizType.value;
             const questions = e.target.elements.questions.value;
 
-            const userInput = {
-                topic,
-                difficulty,
-                type,
-                questions
-            }
+            setLoading(true)
+           
 
-            const response = await fetch('https://quiz-generator-k60h.onrender.com/quiz/create', {
+            const userInput = new FormData()
+            userInput.append("image", image)
+            userInput.append("topic", topic)
+            userInput.append("difficulty", difficulty)
+            userInput.append("type", type)
+            userInput.append("noOfQuestions", questions)
+
+
+            let progress = 10
+            const loadingInterval = setInterval(()=>{
+                progress+=1
+                if (progress>=90) {
+                    clearInterval(loadingInterval)
+                }
+                setLoad(progress)
+            },100)
+
+            const response = await fetch('http://localhost:4000/quiz/create', {
                 method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ userInput })
+                body: userInput
             });
+
             const quiz = await response.json()
+            console.log(quiz);
             newQuiz(JSON.parse(quiz))
-            navigate('/display-quiz')
+
+            clearInterval(loadingInterval)
+            setLoad(100)
+
+            if (quiz) {
+                setTimeout(()=>{
+                setLoading(false)
+                setImage(false)
+                navigate('/display-quiz')
+                }, 500)
+                
+            }
+            
             
 
             if(!response.ok) {
@@ -44,7 +72,9 @@ function GenerateQuizForm() {
     }
     
     return (
-        <div className="w-full md:w-[600px] mx-auto mt-5 px-4 md:px-0">
+        <div className='bg-gray-200 min-h-screen'>
+        {loading? <QuizLoader load={load}/> 
+        : <div className="w-full md:w-[600px] mx-auto px-4 md:px-0">
             <div className="rounded-xl shadow-lg overflow-hidden">
             {/* Header Section */}
             <div className="bg-emerald-600 px-6 py-4">
@@ -54,6 +84,24 @@ function GenerateQuizForm() {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
+
+                {/* Quiz Image */}
+                <div className="space-y-2">
+                    <label 
+                        className="block text-left text-sm px-1 font-bold text-gray-700"
+                        htmlFor="quiz-image">
+                        <img src={image? URL.createObjectURL(image): 'upload_area.png'} alt="" className='w-36'/>
+                    </label>
+                    <input
+                        type="file"
+                        className=""
+                        placeholder="Select Image"
+                        id="quiz-image"
+                        name="quizImage"
+                        hidden
+                        onChange={(e)=>setImage(e.target.files[0])}
+                    />
+                </div>
                 
                 {/* Quiz Topic */}
                 <div className="space-y-2">
@@ -136,8 +184,9 @@ function GenerateQuizForm() {
             <div className="text-center mt-6 text-gray-600 text-sm">
                 Ready to boost your knowledge? 
             </div>
-        </div>
+        </div>}
   
+    </div>
     );
 }
 
