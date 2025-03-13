@@ -17,8 +17,8 @@ function Navbar() {
               <div className="flex space-x-4">
               <Link 
                     to={'/generate-quiz'}
-                    className="w-full bg-white text-emerald-900 hover:bg-emerald-600 hover:text-white py-3 px-6 rounded-lg font-medium">
-                        Generate a Quiz!
+                    className="w-full bg-white text-emerald-900 hover:bg-emerald-600 hover:text-white py-3 px-6 rounded-lg font-bold">
+                        New Quiz!
                 </Link>   
               </div>
             </div>
