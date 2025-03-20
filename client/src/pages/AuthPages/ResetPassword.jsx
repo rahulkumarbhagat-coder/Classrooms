@@ -1,18 +1,29 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../utils/authUtils";
-import AccountTypeModal from "../../components/modals/AccountTypeModal";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import loginImage from "./assets/login-image.png";
 import logoImage from "./assets/logo.png";
 
-function Login() {
-    
-    const { handleLogin, signInWithGoogle, userData } = useAuth();
+function ResetPassword() {
 
-    // Log user in with AuthContext handleLogin function
+    const [email, setEmail] = useState('');
+    const [message, setMessage] = useState('');
+    const [error, setError] = useState('');
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        handleLogin(e.target.elements.email.value, e.target.elements.password.value);
-    };
+        setError('');
+        setMessage('');
+    
+        const auth = getAuth();
+        
+        try {
+          await sendPasswordResetEmail(auth, email);
+          setMessage('Password reset email sent! Check your inbox.');
+        } catch (error) {
+          setError(`Error: ${error.message}`);
+        }
+      };
 
     
     return (
@@ -31,8 +42,11 @@ function Login() {
                 </div>
 
                 <div className="w-1/2 justify-items-start mx-auto my-5">
-                    <div className="font-semibold text-3xl">
-                        <h3>Login to your Account</h3>
+                    <div className="font-semibold justify-items-start text-3xl">
+                        <h3>Reset password</h3>
+                    </div>
+                    <div className="text-gray-500 text-left">
+                        <p>Enter the email address associated with your QuizCraft account.</p>
                     </div>
 
                     <form className="w-full" onSubmit={handleSubmit}>
@@ -41,7 +55,7 @@ function Login() {
                         <div className="flex flex-wrap -mx-3 my-4">
                             <div className="w-full px-3 justify-items-start">
                                 <label className="block tracking-wide text-gray-700 text-lg font-semibold mb-1" htmlFor="email">
-                                    Email
+                                    Email address
                                 </label>
                                 <input 
                                     className="block w-full text-gray-700 rounded-xl py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
@@ -50,32 +64,15 @@ function Login() {
                                     }}
                                     id="email" 
                                     type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     placeholder="Student@gmail.com">
                                 </input>
                             </div>
                         </div>
 
-                        
-                        {/* Password input */}
-                        <div className="flex flex-wrap -mx-3 mb-3">
-                            <div className="w-full px-3">
-                                <div className="justify-items-start mb-1">
-                                    <label className="block tracking-wide text-gray-700 text-lg font-semibold" htmlFor="password">
-                                        Password
-                                    </label>
-                                </div>
-                                <input 
-                                    className="block w-full text-gray-700 rounded-xl py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                                    style={{ 
-                                        boxShadow: "0 -1px 4px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.15)"
-                                    }}
-                                    id="password" 
-                                    type="password" 
-                                    placeholder="***********">
-                                </input>
-                            </div>
-                        </div>
-
+                        {message && <div className="success-message">{message}</div>}
+                        {error && <div className="error-message">{error}</div>}
 
                         <div className="flex justify-end">
                             <button
@@ -84,7 +81,7 @@ function Login() {
                                 style={{ 
                                     boxShadow: "0 -1px 4px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.15)"
                                 }}>
-                                Login
+                                Reset
                             </button>
                         </div>
 
@@ -94,31 +91,20 @@ function Login() {
                             <hr className="flex-grow border-t border-zinc-300" />
                         </div>
 
-                        <button
-                            onClick={signInWithGoogle}
+                        <Link
+                            to={"/login"}
                             className="block w-full text-xl py-2 px-4 mb-3 rounded-xl focus:outline-none focus:shadow-outline hover:bg-[#51CA58] hover:text-white hover:cursor-pointer"
                             style={{ 
                                 boxShadow: "0 -1px 4px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.15)"
                             }}>
-                            Sign up with Google Account
-                        </button>
-
-                        <div className="flex flex-col mt-10">
-                            <Link to={'/register'} className="hover:text-[#18981D] mb-3"><b>Forgot Password?</b></Link>
-                            <Link to={'/register'} className="hover:text-[#18981D]">Don&apos;t have an account?  <u><b>Register</b></u> now</Link>
-                        </div>
+                            Back to Login
+                        </Link>
 
                     </form>       
-
-                    {userData.showTypeModal && (
-                        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/60">
-                            <AccountTypeModal />
-                        </div>
-                    )}
                 </div>
             </div>
         </div>
     );
 }
 
-export default Login;
+export default ResetPassword;
