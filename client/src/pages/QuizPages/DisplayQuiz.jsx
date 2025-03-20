@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import quizStore from '../store/quizStore';
+import quizStore from '../../store/quizStore';
 import { useNavigate } from 'react-router-dom';
 
 const DisplayQuiz = () => {
@@ -11,6 +11,7 @@ const DisplayQuiz = () => {
     const [userAnswers, setUserAnswers] = useState({})
     const [timeLeft, setTimeLeft] = useState(120);
     const navigate = useNavigate()
+    const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'
     
     useEffect(()=>{
       console.log(quizData);
@@ -85,7 +86,7 @@ const DisplayQuiz = () => {
         }
 
         else if (question.question_type === 'Written') {
-          const response = await fetch(`https://quiz-generator-k60h.onrender.com/quiz/check`, {
+          const response = await fetch(`${BASE_URL}/quiz/check`, {
             method: 'POST',
             headers:{
               'Content-type': "application/json",
@@ -119,7 +120,7 @@ const DisplayQuiz = () => {
   
     return (
       <>
-        <div className="w-full min-h-screen bg-black text-green-400 font-mono flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        <div className="w-full min-h-screen bg-black text-green-400 font-mono flex flex-col items-center justify-center p-6 relative overflow-hidden z-999">
       <div className="absolute inset-0 bg-gradient-to-br from-black via-green-900 to-black opacity-40"></div>
       <div className="absolute top-0 left-0 w-1/2 h-1/2 bg-green-500 opacity-20 rounded-full blur-3xl"></div>
       <div className="absolute bottom-0 right-0 w-1/3 h-1/3 bg-green-600 opacity-30 rounded-full blur-3xl"></div>
