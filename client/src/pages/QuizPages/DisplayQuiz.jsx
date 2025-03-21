@@ -19,7 +19,7 @@ const DisplayQuiz = () => {
 
 
     //quiz details
-      const { quiz_details, quiz_questions } = quizData;
+      const { quiz_details, quiz_questions } = quizData.generatedQuiz;
       const currentQuestion = quiz_questions[currentQuestionIndex];
     
 

@@ -12,6 +12,8 @@ import { AuthProvider } from './context/AuthContext.jsx';
 import JoinClassroom from './pages/ClassroomPages/JoinClassroom.jsx';
 import DisplayQuiz from './pages/QuizPages/DisplayQuiz.jsx';
 import StudentResults from './pages/QuizPages/StudentResults.jsx';
+import QuizSetting from './pages/QuizPages/QuizSetting.jsx';
+import ReviewQuiz from './pages/QuizPages/ReviewQuiz.jsx';
 
 const router = createBrowserRouter([
   {
@@ -41,6 +43,14 @@ const router = createBrowserRouter([
       {
         path: '/join-classroom',
         element: <JoinClassroom />
+      },
+      {
+        path: '/review-quiz',
+        element: <ReviewQuiz />
+      },
+      {
+        path: '/quiz-setting',
+        element: <QuizSetting />
       },
       {
         path: '/display-quiz',

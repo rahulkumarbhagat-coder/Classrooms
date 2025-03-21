@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom'
 import quizStore from '../../store/quizStore';
 import QuizLoader from '../../components/QuizLoader';
@@ -11,6 +11,7 @@ function GenerateQuizForm() {
     const [load, setLoad] = useState()
     const [image, setImage] = useState(false)
     const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'
+    const abortControllerRef = useRef(null)
 
     const handleSubmit = async(e) => {
         e.preventDefault();
@@ -22,6 +23,8 @@ function GenerateQuizForm() {
             const questions = e.target.elements.questions.value;
 
             setLoading(true)
+            abortControllerRef.current = new AbortController()
+            const { signal } = abortControllerRef.current
            
 
             const userInput = new FormData()
@@ -43,12 +46,17 @@ function GenerateQuizForm() {
 
             const response = await fetch(`${BASE_URL}/quiz/create`, {
                 method: 'POST',
-                body: userInput
+                body: userInput,
+                signal
             });
+            
+            if (!response.ok) {
+                throw new Error('Failed to create test');
+            }
 
             const quiz = await response.json()
             console.log(quiz);
-            newQuiz(JSON.parse(quiz))
+            newQuiz(quiz)
 
             clearInterval(loadingInterval)
             setLoad(100)
@@ -57,24 +65,27 @@ function GenerateQuizForm() {
                 setTimeout(()=>{
                 setLoading(false)
                 setImage(false)
-                navigate('/display-quiz')
+                navigate(`/quiz-setting`)
                 }, 500)
                 
             }
-            
-            
 
-            if(!response.ok) {
-                throw new Error('Failed to create test')
-            }
         } catch (error) {
             console.error('Error creating the quiz:', error)
         }
     }
+
+    const cancelQuizGeneration = () =>{
+        if (abortControllerRef.current) {
+            abortControllerRef.current.abort()
+        }
+        setLoading(false)
+        setLoad(0)
+    }
     
     return (
         <div className='bg-gray-200 min-h-screen'>
-        {loading? <QuizLoader load={load}/> 
+        {loading? <QuizLoader load={load} cancelQuizGeneration={cancelQuizGeneration}/> 
         : <div className="w-full md:w-[600px] mx-auto px-4 md:px-0">
             <div className="rounded-xl shadow-lg overflow-hidden">
                 {/* Header Section */}
@@ -148,8 +159,8 @@ function GenerateQuizForm() {
                             className="w-full px-4 py-2 rounded-lg border focus:ring-emerald-500"
                             id="quiz-type"
                             name="quizType">
-                                <option value="multiple-choice">Multiple Choice</option>
-                                <option value="true-false">True/False</option>
+                                <option value="mcq">Multiple Choice</option>
+                                <option value="true/false">True/False</option>
                                 <option value="written">Written</option>
                                 <option value="mixture">Mixture</option>
                         </select>

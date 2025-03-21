@@ -1,8 +1,11 @@
+import mongoose from "mongoose";
 import {
     chatSession,
     fileToGenerativePart,
     model,
   } from "../config/aiConfig.js";
+import { Quiz } from "../models/Quiz.js";
+import { Classroom } from "../models/Classroom.js";
   
   export const createQuiz = async (req, res) => {
     const userInput = {
@@ -10,10 +13,23 @@ import {
       noOfQuestion: req.body.noOfQuestions,
       type: req.body.type,
       difficulty: req.body.difficulty,
+      classroom: req.body.classroom,
     };
+    const isInClassroom = userInput.classroom ? true : false
     console.log(userInput);
   
     try {
+      let generatedQuiz;
+      let classroomId = null;
+
+        if (userInput.classroom) {
+            // Validate if `classroom` is a valid ObjectId
+            if (mongoose.Types.ObjectId.isValid(userInput.classroom)) {
+                classroomId = new mongoose.Types.ObjectId(userInput.classroom);
+            } else {
+                return res.status(400).json({ error: "Invalid classroom ID" });
+            }
+        }
       if (req.file) {
         const filename = req.file.path;
         const mimeType = req.file.mimetype;
@@ -22,12 +38,22 @@ import {
         const result = await model.generateContent([prompt, imagePart]);
         const data = result.response.text();
         const cleanedData = data.replace(/```json\s*|\s*```/g, "").trim();
-        res.json(cleanedData);
-        console.log(result.response.text());
+        generatedQuiz = JSON.parse(cleanedData)
       } else {
         const result = await chatSession.sendMessage(JSON.stringify(userInput));
-        res.json(result.response.text());
+        generatedQuiz = JSON.parse(result.response.text())
       }
+
+      const newQuiz = await Quiz.create({
+        difficulty: userInput.difficulty,
+          type: userInput.type,
+          number: userInput.noOfQuestion,
+          classroom: userInput.classroom,
+          isInClassroom: isInClassroom,
+          generatedQuiz: generatedQuiz
+      })
+      userInput.classroom && await Classroom.findByIdAndUpdate(userInput.classroom, {quizzes: newQuiz})
+      res.json(newQuiz)
     } catch (error) {
       console.log("Error", error);
       res.status(500).json("Failed to generate quiz");
