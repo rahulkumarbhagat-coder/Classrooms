@@ -3,12 +3,19 @@ import { auth } from "../../firebase/config"
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../utils/authUtils";
+import AccountTypeModal from "../../components/modals/AccountTypeModal";
+import loginImage from "./assets/login-image.png";
+import studentIcon from "./assets/student-icon.png";
+import teacherIcon from "./assets/teacher-icon.png";
+import logoImage from "./assets/logo.png";
 
 function Register() {
 
     const apiUrl = import.meta.env.VITE_API_URL;
 
-    const { handleLogin } = useAuth();
+    const { handleLogin, signInWithGoogle, userData } = useAuth();
+
+    const [isTeacher, setIsTeacher] = useState(null);
 
     const [formData, setFormData] = useState({
         email: '',
@@ -16,7 +23,7 @@ function Register() {
         lastName: '',
         password: '',
         confirmPassword: '',
-        role: 'student'
+        role: 'Student'
     });
 
     const [error, setError] = useState(null);
@@ -53,6 +60,11 @@ function Register() {
 
             const firebaseUser = userCredential.user
             console.log("FBU",firebaseUser)
+
+            if(isTeacher === null) {
+                setError('Please select an account type');  
+                return;
+            }
             
             // Get authentication token
             const token = await firebaseUser.getIdToken();
@@ -65,7 +77,7 @@ function Register() {
                 body: JSON.stringify({
                     firstName: formData.firstName,
                     lastName: formData.lastName,
-                    isTeacher: formData.role === 'Teacher' ? true : false
+                    isTeacher: isTeacher,
                 })
             });
 
@@ -89,138 +101,199 @@ function Register() {
             setError(error.message);
         }
     };
+
     
     return (
-        <div className="w-full bg-slate-300 md:w-[600px] mx-auto mt-5 px-4 py-5 rounded-xl shadow-lg md:px-0">
-            <div className="my-5 text-6xl">
-                <h1>Register Account</h1>
-            </div>
+        <div className="flex">
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-6">
-                {/* First and last name input */}
-                <div className="flex flex-wrap -mx-3 mb-6">
-                    <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="firstName">
-                            First Name
-                        </label>
-                        <input 
-                            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
-                            id="firstName" 
-                            type="text"
-                            value={formData.firstName}
-                            onChange={handleChange}
-                            placeholder="Jane"
-                            required>
-                        </input>
-                    </div>
-                    <div className="w-full md:w-1/2 px-3">
-                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="lastName">
-                            Last Name
-                        </label>
-                        <input 
-                            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
-                            id="lastName" 
-                            value={formData.lastName}
-                            onChange={handleChange}
-                            type="text" 
-                            placeholder="Doe"
-                            required>
-                        </input>
-                    </div>
+            {/* Login image taking up left half */}
+            <img className="fixed left-0 top-0 w-1/2 h-screen object-cover" src={loginImage} alt="A scrabble board with the tiles arranged to spell 'Learn'" />
+
+            {/* Registration form taking up right half */}
+            <div className="ml-[50%] w-1/2 px-6 py-6">
+
+                {/* QuizCraft heading */}
+                <div className="flex gap-3 my-3">
+                    <img src={logoImage} alt="logo" className="w-12 h-12 text-[#18981D] fill-curent"/>
+                    <h1 className="text-4xl font-bold text-[#18981D]">QuizCraft</h1>
                 </div>
 
-                {/* Email input */}
-                <div className="flex flex-wrap -mx-3 mb-6">
-                    <div className="w-full px-3">
-                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="email">
-                            Email
-                        </label>
-                        <input 
-                            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
-                            id="email" 
-                            type="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            placeholder="Student@gmail.com"
-                            required>
-                        </input>
+                <div className="w-1/2 justify-items-start mx-auto">
+                    <div className="font-semibold text-3xl">
+                        <h3>Create an account</h3>
                     </div>
-                </div>
 
-                
-                {/* Password input */}
-                <div className="flex flex-wrap -mx-3 mb-6">
-                    <div className="w-full px-3">
-                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="password">
-                            Password
-                        </label>
-                        <input 
-                            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
-                            id="password" 
-                            type="password" 
-                            value={formData.password}
-                            onChange={handleChange}
-                            placeholder="Enter your password"
-                            required>
-                        </input>
-                    </div>
-                </div>
+                    <form className="w-full" onSubmit={handleSubmit} >
 
-                {/* Confirm password input */}
-                <div className="flex flex-wrap -mx-3 mb-6">
-                    <div className="w-full px-3">
-                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="confirmPassword">
-                            Confirm Password
-                        </label>
-                        <input 
-                            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
-                            id="confirmPassword" 
-                            type="password"
-                            value={formData.confirmPassword}
-                            onChange={handleChange} 
-                            placeholder="Confirm your password"
-                            required>
-                        </input>
-                    </div>
-                </div>
+                        {/* Account type buttons */}
+                        <div className="flex justify-between gap-4 my-4">
+                            <button 
+                                type="button"
+                                onClick={() => setIsTeacher(true)}
+                                className={`w-48 py-5 font-semibold rounded-xl  ${isTeacher === true ? 'bg-[#18981D] text-white' : 'bg-white text-black hover:bg-[#51CA58] hover:text-white transition-colors duration-200 group'}`}
+                                style={{ 
+                                    boxShadow: "0 -1px 4px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.15)"
+                                }}>
+                                <img className={`mx-auto ${isTeacher === true ? 'brightness-0 invert transition-filter duration-200' : 'group-hover:brightness-0 group-hover:invert transition-filter duration-200'}`} src={teacherIcon} alt="An icon for the teacher button" />
+                                Teacher
+                            </button>
+                            <button 
+                                type="button"
+                                onClick={() => setIsTeacher(false)}
+                                className={`w-48 py-5 font-semibold rounded-xl  ${isTeacher === false ? 'bg-[#18981D] text-white' : 'bg-white text-black hover:bg-[#51CA58] hover:text-white transition-colors duration-200 group'}`}
+                                style={{ 
+                                    boxShadow: "0 -1px 4px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.15)"
+                                }}>
+                                <img className={`mx-auto ${isTeacher === false ? 'brightness-0 invert transition-filter duration-200' : 'group-hover:brightness-0 group-hover:invert transition-filter duration-200'}`} src={studentIcon} alt="An icon for the student button" />
+                                Student
+                            </button>
+                        </div>
 
-                <div className="flex flex-wrap -mx-3 mb-2">
-                    <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
-                        <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="role">
-                            Account Type
-                        </label>
-                        <div className="relative">
-                            <select 
-                                className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500" 
-                                id="role"
-                                value={formData.role}
-                                onChange={handleChange}>
-                                    <option>Student</option>
-                                    <option>Teacher</option>
-                            </select>
-                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        {/* First and last name input */}
+                        <div className="flex mb-3 gap-3">
+                            <div className="md:w-1/2 justify-items-start">
+                                <label className="block tracking-wide text-gray-700 text-lg font-semibold mb-1" htmlFor="firstName">
+                                    First name
+                                </label>
+                                <input 
+                                    className="block w-full text-gray-700 rounded-xl py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                    style={{ 
+                                        boxShadow: "0 -1px 4px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.15)"
+                                    }}
+                                    id="firstName" 
+                                    type="text"
+                                    value={formData.firstName}
+                                    onChange={handleChange}
+                                    placeholder="Jane"
+                                    required>
+                                </input>
+                            </div>
+                            <div className="md:w-1/2 justify-items-start">
+                                <label className="block tracking-wide text-gray-700 text-lg font-semibold mb-1" htmlFor="lastName">
+                                    Last Name
+                                </label>
+                                <input 
+                                    className="block w-full text-gray-700 rounded-xl py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                    style={{ 
+                                        boxShadow: "0 -1px 4px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.15)"
+                                    }}
+                                    id="lastName" 
+                                    value={formData.lastName}
+                                    onChange={handleChange}
+                                    type="text" 
+                                    placeholder="Doe"
+                                    required>
+                                </input>
                             </div>
                         </div>
-                    </div>
+
+                        {/* Email input */}
+                        <div className="flex flex-wrap -mx-3 mb-3">
+                            <div className="w-full px-3 justify-items-start">
+                                <label className="block tracking-wide text-gray-700 text-lg font-semibold mb-1" htmlFor="email">
+                                    Email
+                                </label>
+                                <input 
+                                    className="block w-full text-gray-700 rounded-xl py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                    style={{ 
+                                        boxShadow: "0 -1px 4px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.15)"
+                                    }}
+                                    id="email" 
+                                    type="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    placeholder="Student@gmail.com"
+                                    required>
+                                </input>
+                            </div>
+                        </div>
+
+                        
+                        {/* Password input */}
+                        <div className="flex flex-wrap -mx-3 mb-3">
+                            <div className="w-full px-3">
+                                <div className="justify-items-start mb-1">
+                                    <label className="block tracking-wide text-gray-700 text-lg font-semibold" htmlFor="password">
+                                        Password
+                                    </label>
+                                    <span className="text-sm text-gray-400 font-semibold">Must be at least 6 characters</span>
+                                </div>
+                                <input 
+                                    className="block w-full text-gray-700 rounded-xl py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                    style={{ 
+                                        boxShadow: "0 -1px 4px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.15)"
+                                    }}
+                                    id="password" 
+                                    type="password" 
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    placeholder="Enter your password"
+                                    required>
+                                </input>
+                            </div>
+                        </div>
+
+                        {/* Confirm password input */}
+                        <div className="flex flex-wrap -mx-3 mb-3">
+                            <div className="w-full px-3 justify-items-start">
+                                <label className="block tracking-wide text-gray-700 text-lg font-semibold mb-1" htmlFor="confirmPassword">
+                                    Confirm Password
+                                </label>
+                                <input 
+                                    className="block w-full text-gray-700 rounded-xl py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" 
+                                    style={{ 
+                                        boxShadow: "0 -1px 4px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.15)"
+                                    }}
+                                    id="confirmPassword" 
+                                    type="password"
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange} 
+                                    placeholder="Confirm your password"
+                                    required>
+                                </input>
+                            </div>
+                        </div>
+
+                        {error && (
+                            <div className="text-red-500 text-sm mb-3">{error}</div>
+                        )}
+
+                        {/* Submit Button */}
+                        <button
+                            type="submit"
+                            className="block w-full text-xl text-white bg-[#18981D] py-2 px-4 rounded-xl focus:outline-none focus:shadow-outline hover:bg-[#51CA58] hover:cursor-pointer"
+                            style={{ 
+                                boxShadow: "0 -1px 4px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.15)"
+                            }}>
+                            Sign up
+                        </button>
+
+                        <div className="flex items-center my-2 justify-center">
+                            <hr className="flex-grow border-t border-zinc-300" />
+                            <p className="mx-4 text-sm text-zinc-500">Or</p>
+                            <hr className="flex-grow border-t border-zinc-300" />
+                        </div>
+
+                        <button
+                            onClick={signInWithGoogle}
+                            className="block w-full text-xl py-2 px-4 mb-3 rounded-xl focus:outline-none focus:shadow-outline hover:bg-[#51CA58] hover:text-white hover:cursor-pointer"
+                            style={{ 
+                                boxShadow: "0 -1px 4px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.15)"
+                            }}>
+                            Sign up with Google Account
+                        </button>
+
+                        <Link to={'/login'} className="hover:text-[#18981D]">Already have an account? <u><b>Log in</b></u> now</Link>
+
+                    </form>    
+
+                    {userData.showTypeModal && (
+                        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/60">
+                            <AccountTypeModal />
+                        </div>
+                    )}    
                 </div>
-
-                {error && (
-                    <div className="text-red-500 text-sm mb-4">{error}</div>
-                )}
-
-                <div className="flex justify-end">
-                    <button
-                        type="submit"
-                        className="font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:!bg-amber-500 hover:cursor-pointer"
-                    >
-                        Register
-                    </button>
-                </div>
-
-                <Link to={'/login'} className="text-sm mb-4 hover:text-blue-700">Already have an account? Login!</Link>
-
-            </form>        
+            </div>
         </div>
     );
 }

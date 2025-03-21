@@ -7,6 +7,8 @@ import GenerateQuizForm from './pages/QuizPages/GenerateQuizForm.jsx';
 import Homepage from './pages/HomePage.jsx';
 import Register from './pages/AuthPages/Register.jsx'
 import Login from './pages/AuthPages/Login.jsx'
+import ResetPassword from './pages/AuthPages/ResetPassword.jsx';
+import NewPassword from './pages/AuthPages/NewPassword.jsx';
 import CreateClassroom from './pages/ClassroomPages/CreateClassroom.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import JoinClassroom from './pages/ClassroomPages/JoinClassroom.jsx';
@@ -35,6 +37,14 @@ const router = createBrowserRouter([
       {
         path: '/login',
         element: <Login />
+      },
+      {
+        path: '/reset-password',
+        element: <ResetPassword />
+      },
+      {
+        path: '/new-password',
+        element: <NewPassword />
       },
       {
         path: '/create-classroom',
