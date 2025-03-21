@@ -48,7 +48,7 @@ const EditQuestionModal = ({ isOpen, onClose, question, onSave }) => {
                 type="text"
                 value={option}
                 onChange={(e) => handleOptionChange(index, e.target.value)}
-                className="w-[42] border-gray-200 border-2 p-2 m-3 bg-white rounded-2xl shadow-xl font-semibold text-cyy text-gray-700"
+                className="min-w-[42] border-gray-200 border-2 p-2 m-3 bg-white rounded-2xl shadow-xl font-semibold text-cyy text-gray-700"
               />
             ))}
           </div>
@@ -65,7 +65,7 @@ const EditQuestionModal = ({ isOpen, onClose, question, onSave }) => {
             <input
               type="text"
               name="answer"
-              className="w-[42] border-gray-200 border-2 p-2 mb-1 bg-white rounded-2xl shadow-xl font-semibold text-cyy text-gray-700"
+              className="min-w-[42] border-gray-200 border-2 p-2 mb-1 bg-white rounded-2xl shadow-xl font-semibold text-cyy text-gray-700"
               value={editedQuestion.answer}
               onChange={handleChange}
             />
