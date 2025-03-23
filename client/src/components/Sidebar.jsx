@@ -1,24 +1,13 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../utils/authUtils';
-import { getAuth, signOut } from 'firebase/auth';
 
 const Sidebar = () => {
 
-  const { userData } = useAuth();
+  const { userData, handleLogout } = useAuth();
 
-  const handleLogout = async () => {
-    const auth = getAuth();
-    try {
-        await signOut(auth);
-        window.location.reload();
-    } catch (error) {
-        console.log("Error signing out", error);
-    }
-}
   return (
     <div>
-    <aside className="w-72 bg-gray-100 p-6 flex flex-col space-y-6 min-h-screen shadow- absolute top-0 z-999 overflow-y-hidden">
+      <aside className="w-72 bg-gray-100 p-6 flex flex-col space-y-6 min-h-screen shadow- absolute top-0 z-999 overflow-y-hidden">
         <div className="flex gap-3 mb-[50px] justify-center">
         <img src="Frame (2).svg" alt="logo" className="w-10 h-10"/>
         <h1 className="text-3xl font-bold text-gray-900">QuizCraft</h1>
@@ -45,7 +34,7 @@ const Sidebar = () => {
         </div>
         <button className="text-red-600 font-medium">
           {userData.user?
-          <div className="flex gap-5 justify-center" onClick={handleLogout}>
+          <div className="flex gap-5 justify-center hover:cursor-pointer" onClick={handleLogout}>
           <img src="Frame (1).svg" alt="" />
           Log out
           </div> 
@@ -56,7 +45,7 @@ const Sidebar = () => {
           </Link>
         }
           
-          </button>
+        </button>
       </aside>
     </div>
   )

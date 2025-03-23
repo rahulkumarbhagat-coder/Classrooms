@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { AuthContext } from "../utils/authUtils";
 import { auth } from '../firebase/config';
-import { onAuthStateChanged, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { onAuthStateChanged, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 
 // eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
@@ -99,6 +99,7 @@ export const AuthProvider = ({ children }) => {
             }
         } catch(error) {
             console.error('Login error:', error);
+            throw error;
         } finally {
             setUserData(prev => ({
                 ...prev,
@@ -205,8 +206,27 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
+    const handleLogout = () => {
+        signOut(auth).then(() => {
+            setUserData(prev => ({
+                ...prev,
+                user: null,
+                firstName: '',
+                lastName: '',
+                email: '',
+                isTeacher: false,
+                classrooms: [],
+                quizzes: [],
+                showAccountTypeModal: false
+            }));
+            window.location.reload();
+        }).catch((error) => {
+            console.error('Logout error:', error);
+        });
+    }
+
     return (
-        <AuthContext.Provider value={{ userData, setUserData, handleLogin, signInWithGoogle, handleAccountSelection }}>
+        <AuthContext.Provider value={{ userData, setUserData, handleLogin, handleLogout, signInWithGoogle, handleAccountSelection }}>
             {children}
         </AuthContext.Provider>
     );
