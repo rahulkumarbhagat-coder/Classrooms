@@ -18,7 +18,7 @@ const Header = () => {
             </div>
           </div>
 
-      {/* Profile and Breadcrumbs */}
+      {/* Profile */}
       <div className="flex gap-5 justify-between self-end items-center">
           <div className="flex items-center bg-white p-3 rounded-lg shadow-2xl">
             <div className="w-12 h-12 bg-gray-300 rounded-full flex justify-center items-center"><img src="Frame (3).svg" alt="" /></div>

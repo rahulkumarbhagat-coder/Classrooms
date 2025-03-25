@@ -17,6 +17,8 @@ classRouter.post('/new-classroom', authMiddleware, async(req,res) => {
         console.log('classDetails', classDetails);
 
         const name = classDetails.name;
+        const subject = classDetails.subject;
+        const gradeLevel = classDetails.gradeLevel;
         const description = classDetails.description;
 
         if(!name) {
@@ -30,6 +32,8 @@ classRouter.post('/new-classroom', authMiddleware, async(req,res) => {
         // Create new classroom
         const newClassroom = await Classroom.create({
             name,
+            subject,
+            gradeLevel,
             description,
             teachers: [uid.toString()],
             students: [],
