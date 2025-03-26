@@ -1,15 +1,17 @@
 import mongoose from 'mongoose';
-import { type } from 'os';
 
 const quizSchema = new mongoose.Schema({
+    title:{
+        type: String
+    },
     difficulty: {
         type: String,
-        enum: ['easy', 'medium', 'hard'],
+        enum: ['Easy', 'Medium', 'Hard'],
         required: true
     },
     type: {
-        type: String,
-        enum: ['mcq', 'true/false', 'written', 'mixture'],
+        type: [String],
+        enum: ['Multiple Choice', 'True/False', 'Short Answer', 'Essay'],
         required: true
     },
     number: {
@@ -44,13 +46,32 @@ const quizSchema = new mongoose.Schema({
         ref: 'Classroom',
         // Only required if type is 'classroom'
         required: function() {
-          return this.isInClassroom === 'classroom';
+          return this.isInClassroom === true;
         }
-      },
-      generatedQuiz:{
+    },
+    generatedQuiz:{
         type: Object,
         required: true
-      }
+    },
+    results: [
+        {
+            user: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'User'
+            },
+            result: {
+                type: Object,
+
+            },
+            completedAt: {
+                type: Date
+            },
+            attemptsUsed: {
+                type: Number,
+                default: 1
+            }
+        }
+    ]
 });
 
 export const Quiz = mongoose.model('Quiz', quizSchema)

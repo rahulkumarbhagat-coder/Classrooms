@@ -8,12 +8,20 @@ const quizStore = create(
     //state variables
     quizData : {},
     allQuizzes : [],
+    classQuizzes: [],
     quizResults: {},
     
     //setter functions
     newResults: (result) => set({quizResults: result}),
     newQuiz: (quiz) => set({quizData: quiz}),
-    setAllQuiz: (quiz) => set({allQuizzes: quiz})
+    updateQuiz: (result) => set((state) => ({
+      quizData: {
+        ...state.quizData,
+        result
+      }
+    })),
+    setAllQuiz: (quiz) => set({allQuizzes: quiz}),
+    setClassQuiz: (quiz) => set({classQuizzes: quiz})
   }),
 
   //storage

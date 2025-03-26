@@ -11,6 +11,8 @@ const Dashboard = ({classes}) => {
     const navigate = useNavigate()
     const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'
 
+    console.log(userData);
+    
 
     const getAllQuiz = async() =>{
       try {
@@ -83,11 +85,8 @@ const Dashboard = ({classes}) => {
           <div>
             <div className="flex justify-between items-center p-2">
               <h2 className="text-lg font-bold">Recent Quizzes</h2>
-              <Link to="/quizzes" className="text-[#7E7E7E] font-semibold text-sm">
-                View All
-              </Link>
             </div>
-          <div className="bg-white shadow-xl min-h-72 rounded-lg p-3">
+          <div className="bg-white shadow-xl min-h-40 max-h-[80vh] rounded-lg p-3 overflow-y-scroll">
             <div className="text-center p-6">
               {quizzes?.length === 0 ? (
                 <div>
@@ -108,18 +107,18 @@ const Dashboard = ({classes}) => {
                 </div>
               ) : (
                 quizzes?.map((quiz, index) => (
-                  <div key={index} className={`p-4 bg-gray-${quiz.status==='active'? '100': '600'} rounded-lg shadow-md mt-4 flex justify-between items-center`}>
+                  <div key={index} className={`p-4 bg-gray-${quiz.status==='active'? '100': '600'} rounded-lg shadow-md mt-2 flex justify-between items-center`}>
                     <div>
                       <p className={`font-semibold cursor-pointer text-${quiz.status==='active'? 'gray-600': 'white'}`} onClick={()=> handleClick(quiz)}>{quiz?.generatedQuiz?.quiz_details?.topic || "Untitled Quiz"} <span className="text-xs bg-gray-300 text-gray-700 mx-5 px-2 py-1 rounded">{quiz.status}</span></p>
-                      <p className={`text-sm text-${quiz.status==='active'? 'gray-600': 'white'} text-left`}>• {quiz.type || "Unknown Type"} • {quiz.number || 0} Questions</p>
+                      <p className={`text-sm text-${quiz.status==='active'? 'gray-600': 'white'} text-left`}>• {`${quiz.type} ` || "Unknown Type"} • {quiz.number || 0} Questions</p>
                     </div>
                     <div className={`text-sm text-${quiz.status==='active'? 'gray-500': 'white'}`}>Created At {new Date(quiz.createdOn).toLocaleString()}</div>
                     <div className="flex gap-5">
                       <button className="text-gray-600 hover:text-black cursor-pointer" onClick={()=> {newQuiz(quiz); navigate('/review-quiz')}}>
-                        <span className="material-icons"><img src="Vector.svg" alt="" /></span>
+                        <span className="material-icons"><img src={quiz.status==='active'? "Vector.svg" : "Vector (10).svg"} alt="" /></span>
                       </button>
                       <button className="text-gray-600 hover:text-black cursor-pointer" onClick={()=> deleteQuiz(quiz._id)}>
-                        <span className="material-icons"><img src="Vector (1).svg" alt="" /></span>
+                        <span className="material-icons"><img src={quiz.status==='active'? "Vector (1).svg" : "Vector (11).svg"} alt="" /></span>
                       </button>
                     </div>
                   </div>
@@ -131,12 +130,9 @@ const Dashboard = ({classes}) => {
           
 
           {/* My Classes */}
-          <div className="">
+          <div className="mt-4">
             <div className="flex justify-between items-center p-2">
               <h2 className="text-lg font-bold">My Classes</h2>
-              <Link to="/classes" className="text-[#7E7E7E] font-semibold text-sm">
-                View All
-              </Link>
             </div>
             <div className="bg-white shadow-xl rounded-lg p-4">
             <div className="text-center p-6">
