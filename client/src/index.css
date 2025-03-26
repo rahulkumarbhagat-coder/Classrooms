@@ -1,14 +1,7 @@
 @import "tailwindcss";
 
-/* html,
+html,
 body,
 #root {
   font-family: "Poppins", sans-serif !important;
-} */
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
 }

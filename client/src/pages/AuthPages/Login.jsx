@@ -22,7 +22,7 @@ function Login() {
             <img className="fixed left-0 top-0 w-1/2 h-screen object-cover" src={loginImage} alt="A scrabble board with the tiles arranged to spell 'Learn'" />
 
             {/* Login form taking up right half */}
-            <div className="ml-[50%] w-1/2 px-6 py-6">
+            <div className="ml-[50%] h-screen bg-white w-1/2 px-6 py-6">
 
                 {/* QuizCraft heading */}
                 <div className="flex gap-3 my-3">
@@ -100,11 +100,11 @@ function Login() {
                             style={{ 
                                 boxShadow: "0 -1px 4px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.15)"
                             }}>
-                            Sign up with Google Account
+                            Sign in with Google Account
                         </button>
 
                         <div className="flex flex-col mt-10">
-                            <Link to={'/register'} className="hover:text-[#18981D] mb-3"><b>Forgot Password?</b></Link>
+                            <Link to={'/reset-password'} className="hover:text-[#18981D] mb-3"><b>Forgot Password?</b></Link>
                             <Link to={'/register'} className="hover:text-[#18981D]">Don&apos;t have an account?  <u><b>Register</b></u> now</Link>
                         </div>
 

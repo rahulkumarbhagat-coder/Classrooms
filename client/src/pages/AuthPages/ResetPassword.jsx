@@ -32,8 +32,8 @@ function ResetPassword() {
             {/* Login image taking up left half */}
             <img className="fixed left-0 top-0 w-1/2 h-screen object-cover" src={loginImage} alt="A scrabble board with the tiles arranged to spell 'Learn'" />
 
-            {/* Login form taking up right half */}
-            <div className="ml-[50%] w-1/2 px-6 py-6">
+            {/* Reset password form taking up right half */}
+            <div className="ml-[50%] h-screen bg-white w-1/2 px-6 py-6">
 
                 {/* QuizCraft heading */}
                 <div className="flex gap-3 my-3">
