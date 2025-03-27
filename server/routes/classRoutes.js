@@ -5,6 +5,41 @@ import { User } from '../models/User.js';
 
 export const classRouter = express.Router();
 
+// Get all classrooms
+classRouter.get('/user-classrooms', authMiddleware, async(req, res) => {
+    try {
+        const { uid } = req.user;
+
+        // Find the user to get their classroom IDs
+        const user = await User.findOne({ firebaseUid: uid });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        let classrooms = [];
+
+        // If user is a teacher, find classrooms where they are listed as a teacher
+        if (user.isTeacher) {
+            classrooms = await Classroom.find({ 
+                teachers: uid.toString() 
+            }).populate('quizzes');
+        } else {
+            // If user is a student, find classrooms where their _id is in the students array
+            if (user.classrooms && user.classrooms.length > 0) {
+                classrooms = await Classroom.find({
+                    _id: { $in: user.classrooms }
+                }).populate('quizzes');
+            }
+        }
+
+        res.status(200).json(classrooms);
+    } catch (error) {
+        console.error('Error fetching user classrooms:', error);
+        res.status(500).json({ error: 'Error fetching classrooms' });
+    }
+});
+
 // Create new classroom
 classRouter.post('/new-classroom', authMiddleware, async(req,res) => {
     console.log('req.user', req.user);

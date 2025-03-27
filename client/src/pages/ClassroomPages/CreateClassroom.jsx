@@ -1,10 +1,10 @@
 import { useAuth } from "../../utils/authUtils";
+import { useClassroom } from "../../utils/classroomUtils";
 
 function CreateClassroom() {
 
-    const apiUrl = import.meta.env.VITE_API_URL;
-
     const { userData } = useAuth();
+    const { createClassroom } = useClassroom();
 
     const handleSubmit = async(e) => {
         e.preventDefault();
@@ -18,7 +18,6 @@ function CreateClassroom() {
             return;
         }
 
-        try {
             const name = e.target.elements.name.value.trim();
             const subject = e.target.elements.subject.value.trim();
             const gradeLevel = e.target.elements.gradeLevel.value.trim();
@@ -33,29 +32,10 @@ function CreateClassroom() {
 
             console.log('CD: ',classDetails);
 
+            createClassroom(classDetails);
 
-            const token = await userData.user.getIdToken();
-            
-            const response = await fetch(`${apiUrl}/class/new-classroom`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ classDetails })
-            });
-
-            console.log(await response.json())
-
-            if(!response.ok) { 
-                throw new Error('Failed to create test')
-            }
             alert(`${classDetails.name} classroom created successfully!`);
             e.target.reset();
-            
-        } catch (error) {
-            console.error('Error creating classroom:', error)
-        }
     }
     
     return (

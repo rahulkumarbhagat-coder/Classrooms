@@ -9,6 +9,8 @@ export const AuthProvider = ({ children }) => {
         throw new Error('AuthProvider requires a children prop');
     }
 
+    const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
+
     const [userData, setUserData] = useState({
         user: null,
         loading: true,
@@ -25,7 +27,7 @@ export const AuthProvider = ({ children }) => {
         if (!user) return null;
 
         try {
-            const response = await fetch('http://localhost:5000/auth/user', {
+            const response = await fetch(`${BASE_URL}:5000/auth/user`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

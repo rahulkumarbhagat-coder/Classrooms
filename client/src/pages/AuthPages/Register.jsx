@@ -11,7 +11,7 @@ import logoImage from "./assets/logo.png";
 
 function Register() {
 
-    const apiUrl = import.meta.env.VITE_API_URL;
+    const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
 
     const { handleLogin, signInWithGoogle, userData } = useAuth();
 
@@ -68,7 +68,7 @@ function Register() {
             
             // Get authentication token
             const token = await firebaseUser.getIdToken();
-            const response = await fetch(`${apiUrl}/auth/new-user`, {
+            const response = await fetch(`${BASE_URL}/auth/new-user`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

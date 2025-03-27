@@ -1,10 +1,10 @@
 import { useAuth } from "../../utils/authUtils";
+import { useClassroom } from "../../utils/classroomUtils";
 
 function JoinClassroom() {
 
-    const apiUrl = import.meta.env.VITE_API_URL;
-
     const { userData } = useAuth();
+    const { joinClassroom } = useClassroom();
 
     const handleSubmit = async(e) => {
         e.preventDefault();
@@ -18,37 +18,7 @@ function JoinClassroom() {
             return;
         }
 
-        try {
-            const inviteCode = e.target.elements.inviteCode.value.trim();
-
-            console.log('inviteCode: ', inviteCode);
-
-
-            const token = await userData.user.getIdToken();
-            
-            const response = await fetch(`${apiUrl}/class/join-classroom`, {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ inviteCode })
-            });
-
-            const data = await response.json();
-
-            console.log(data)
-
-            if(!response.ok) { 
-                throw new Error('Failed to join classroom')
-            }
-
-            alert(`${data.name} classroom joined successfully!`);
-            e.target.reset();
-            
-        } catch (error) {
-            console.error('Error joining classroom:', error)
-        }
+        joinClassroom(e.target.elements.inviteCode.value.trim());
     }
     
     return (
