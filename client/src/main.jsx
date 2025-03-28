@@ -13,6 +13,8 @@ import { AuthProvider } from './context/AuthContext.jsx';
 import { ClassroomProvider } from './context/ClassroomContext.jsx';
 import JoinClassroom from './pages/ClassroomPages/JoinClassroom.jsx';
 import ClassroomDashboard from './pages/ClassroomPages/ClassroomDashboard.jsx';
+import StudentDashboard from './components/StudentDashboard.jsx';
+import TeacherDashboard from './pages/TeacherDashboard.jsx';
 import DisplayQuiz from './pages/QuizPages/DisplayQuiz.jsx';
 import StudentResults from './pages/QuizPages/StudentResults.jsx';
 import QuizSetting from './pages/QuizPages/QuizSetting.jsx';
@@ -61,6 +63,14 @@ const router = createBrowserRouter([
       {
         path: '/classroom/:id',
         element: <ClassroomDashboard />
+      },
+      {
+        path: '/student/:id',
+        element: <StudentDashboard />
+      },
+      {
+        path: '/teacher/:id',
+        element: <TeacherDashboard />
       },
       {
         path: '/review-quiz',

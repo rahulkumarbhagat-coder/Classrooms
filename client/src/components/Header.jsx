@@ -1,8 +1,19 @@
 import React from 'react'
 import { useAuth } from "../utils/authUtils";
+import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
-    const { userData } = useAuth();
+  const { userData } = useAuth();
+
+  const navigate = useNavigate();
+
+  const handleNavigate = () => {
+    if(userData.isTeacher) {
+      return navigate(`/teacher/${userData.user?.uid}`);
+    } else {
+      navigate(`/student/${userData.user?.uid}`);
+    }
+  }
 
   return (
     <div className='flex flex-col-reverse md:flex-row justify-between'>
@@ -22,7 +33,7 @@ const Header = () => {
       <div className="flex gap-5 w-[70vw] h-20 md:h-full md:w-[30vw] lg:w-[20vw] self-end justify-end items-center">
           <div className="flex items-center bg-white p-3 rounded-lg shadow-2xl">
             <div className="w-12 h-12 bg-gray-300 rounded-full flex justify-center items-center"><img src="Frame (3).svg" alt="" /></div>
-            <div className="ml-3 text-left">
+            <div className="ml-3 text-left hover:cursor-pointer" onClick={handleNavigate}>
               <p className="font-bold">{userData.user ? (<>{userData.firstName} {userData.lastName}</>) : ("Guest")}</p>
               <p className="text-sm text-gray-500">{userData.isTeacher ? ("Teacher") : ("Student")}</p>
             </div>

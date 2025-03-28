@@ -92,13 +92,11 @@ export const AuthProvider = ({ children }) => {
         }));
         try {
             const user = await signInWithEmailAndPassword(auth,email,password);
-            if(user.user.isTeacher !== undefined) {
                 setUserData(prev => ({
                     ...prev,
                     user: user.user 
                 }));
                 window.location.href = '/';
-            }
         } catch(error) {
             console.error('Login error:', error);
             throw error;

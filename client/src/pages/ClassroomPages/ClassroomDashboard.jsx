@@ -14,6 +14,14 @@ const ClassroomDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [classroom, setClassroom] = useState(null);
 
+    const handleNavigate = () => {
+        if(userData.isTeacher) {
+          return navigate(`/teacher/${userData.user?.uid}`);
+        } else {
+          navigate(`/student/${userData.user?.uid}`);
+        }
+      }
+
     // Find the current classroom from context based on ID
     useEffect(() => {
         console.log("Classroom ID from params:", id);
@@ -93,6 +101,7 @@ const ClassroomDashboard = () => {
         window.confirm("Are you sure you want to delete this classroom?")
         if(window.confirm) {
             deleteClassroom(classroom._id);
+            navigate(`/teacher/${userData.user?.uid}`);
         }
     }
 
@@ -139,7 +148,7 @@ const ClassroomDashboard = () => {
                         <div className="w-12 h-12 bg-gray-300 rounded-full flex justify-center items-center">
                             <img src="/Frame (3).svg" alt="" />
                         </div>
-                        <div className="ml-3 text-left">
+                        <div className="ml-3 text-left hover:cursor-pointer" onClick={handleNavigate}>
                             <p className="font-bold">{userData.user ? (<>{userData.firstName} {userData.lastName}</>) : ("Guest")}</p>
                             <p className="text-sm text-gray-500">{userData.isTeacher ? ("Teacher") : ("Student")}</p>
                         </div>

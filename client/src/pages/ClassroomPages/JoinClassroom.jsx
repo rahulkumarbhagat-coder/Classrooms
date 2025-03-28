@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAuth } from "../../utils/authUtils";
 import { useClassroom } from "../../utils/classroomUtils";
 import { useNavigate } from 'react-router-dom';
@@ -7,10 +8,13 @@ function JoinClassroom() {
     const { userData } = useAuth();
     const { joinClassroom } = useClassroom();
 
+    const [error,setError] = useState(null);
+
     const navigate = useNavigate();
 
     const handleSubmit = async(e) => {
         e.preventDefault();
+        setError(null);
 
         if(!userData.user) {
             console.error('User not logged in');
@@ -21,8 +25,26 @@ function JoinClassroom() {
             return;
         }
 
-        joinClassroom(e.target.elements.inviteCode.value.trim());
+        try {
+            const inviteCode = e.target.elements.inviteCode.value.trim();
+            const joinedClass = await joinClassroom(inviteCode);
+            window.confirm(`You have joined the class ${joinedClass.className}!`);
+            if(window.confirm) {
+                navigate(`/classroom/${joinedClass._id}`); 
+            }
+        } catch (err) {
+            console.error("Error joining classroom:", err);
+            setError(err.message || 'Failed to join classroom');
+        }
     }
+
+    const handleNavigate = () => {
+        if(userData.isTeacher) {
+          return navigate(`/teacher/${userData.user?.uid}`);
+        } else {
+          navigate(`/student/${userData.user?.uid}`);
+        }
+      }
     
     return (
         <div className="flex-grow h-screen bg-gray-300 pl-72">
@@ -48,9 +70,9 @@ function JoinClassroom() {
                         <div className="w-12 h-12 bg-gray-300 rounded-full flex justify-center items-center">
                             <img src="Frame (3).svg" alt="" />
                         </div>
-                        <div className="ml-3 text-left">
-                            <p className="font-bold">{userData?.user ? (<>{userData.firstName} {userData.lastName}</>) : ("Guest")}</p>
-                            <p className="text-sm text-gray-500">{userData?.isTeacher ? ("Teacher") : ("Student")}</p>
+                        <div className="ml-3 text-left hover:cursor-pointer" onClick={handleNavigate}>
+                            <p className="font-bold">{userData.user ? (<>{userData.firstName} {userData.lastName}</>) : ("Guest")}</p>
+                            <p className="text-sm text-gray-500">{userData.isTeacher ? ("Teacher") : ("Student")}</p>
                         </div>
                         <img src="weui_arrow-filled.svg" alt="" className="ml-2"/>
                     </div>
@@ -102,6 +124,18 @@ function JoinClassroom() {
                                 Class codes are not case sensitive
                             </p>
                         </div>
+
+                        {/* Error message */}
+                        {error && (
+                            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+                                <div className="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                    {error}
+                                </div>
+                            </div>
+                        )}
 
                         {/* Help Section */}
                         <div className="my-6 pt-4 border-t border-gray-200">

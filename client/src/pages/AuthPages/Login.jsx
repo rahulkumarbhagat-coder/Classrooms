@@ -15,8 +15,9 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
-
+        
         try {
+            console.log("loggin in")
             await handleLogin(e.target.elements.email.value, e.target.elements.password.value);
         } catch (err) {
             // Handle different error types

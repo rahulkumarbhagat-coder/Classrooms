@@ -122,6 +122,15 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
         }));
 
         try {
+            const alreadyJoined = classroomData.classrooms.some(
+                classroom => classroom.inviteCode === inviteCode
+            )
+            if (alreadyJoined) {
+                setClassroomData(prev => ({
+                    ...prev, loading: false
+                }));
+                throw new Error('You are already a member of this classroom');
+            }
             const token = await userData.user.getIdToken();
             const response = await fetch(`${BASE_URL}class/join-classroom`, {
                 method: 'POST',
