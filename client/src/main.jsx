@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css'
 import App from './App.jsx'
-import GenerateQuizForm from './pages/QuizPages/GenerateQuizForm.jsx';
 import Homepage from './pages/HomePage.jsx';
 import Register from './pages/AuthPages/Register.jsx'
 import Login from './pages/AuthPages/Login.jsx'
@@ -18,6 +17,9 @@ import DisplayQuiz from './pages/QuizPages/DisplayQuiz.jsx';
 import StudentResults from './pages/QuizPages/StudentResults.jsx';
 import QuizSetting from './pages/QuizPages/QuizSetting.jsx';
 import ReviewQuiz from './pages/QuizPages/ReviewQuiz.jsx';
+import QuizForm from './pages/QuizPages/QuizForm.jsx';
+import AllResult from './pages/QuizPages/AllResult.jsx';
+import QuizHistory from './pages/QuizPages/QuizHistory.jsx';
 
 const router = createBrowserRouter([
   {
@@ -30,7 +32,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/generate-quiz",
-        element: <GenerateQuizForm />,
+        element: <QuizForm />,
       },
       {
         path: '/register',
@@ -75,6 +77,14 @@ const router = createBrowserRouter([
       {
         path: "/display-result",
         element: <StudentResults />,
+      },
+      {
+        path: "/display-my-quiz",
+        element: <QuizHistory />,
+      },
+      {
+        path: "/display-all-result",
+        element: <AllResult />,
       },
     ],
   },

@@ -16,6 +16,9 @@ import { Classroom } from "../models/Classroom.js";
       classroom: req.body.classroom,
     };
     const isInClassroom = userInput.classroom ? true : false
+    if (typeof userInput.type === 'string') {
+      userInput.type = userInput.type.split(',').map((item) => item.trim())
+    }
     console.log(userInput);
   
     try {
@@ -25,7 +28,7 @@ import { Classroom } from "../models/Classroom.js";
         if (userInput.classroom) {
             // Validate if `classroom` is a valid ObjectId
             if (mongoose.Types.ObjectId.isValid(userInput.classroom)) {
-                classroomId = new mongoose.Types.ObjectId(userInput.classroom);
+              classroomId = new mongoose.Types.ObjectId(userInput.classroom);
             } else {
                 return res.status(400).json({ error: "Invalid classroom ID" });
             }
@@ -48,11 +51,11 @@ import { Classroom } from "../models/Classroom.js";
         difficulty: userInput.difficulty,
           type: userInput.type,
           number: userInput.noOfQuestion,
-          classroom: userInput.classroom,
+          classroom: classroomId,
           isInClassroom: isInClassroom,
           generatedQuiz: generatedQuiz
       })
-      userInput.classroom && await Classroom.findByIdAndUpdate(userInput.classroom, {quizzes: newQuiz})
+      classroomId && await Classroom.findByIdAndUpdate(classroomId, {$push: {quizzes: newQuiz}}, {new: true})
       res.json(newQuiz)
     } catch (error) {
       console.log("Error", error);
