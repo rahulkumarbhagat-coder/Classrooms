@@ -23,8 +23,8 @@ const Header = () => {
           <div className="flex items-center bg-white p-3 rounded-lg shadow-2xl">
             <div className="w-12 h-12 bg-gray-300 rounded-full flex justify-center items-center"><img src="Frame (3).svg" alt="" /></div>
             <div className="ml-3 text-left">
-              <p className="font-bold">Lisa Jones</p>
-              <p className="text-sm text-gray-500">Student</p>
+              <p className="font-bold">{userData.user ? (<>{userData.firstName} {userData.lastName}</>) : ("Guest")}</p>
+              <p className="text-sm text-gray-500">{userData.isTeacher ? ("Teacher") : ("Student")}</p>
             </div>
             <img src="weui_arrow-filled.svg" alt="" className="self-end"/>
           </div>

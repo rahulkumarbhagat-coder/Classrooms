@@ -5,6 +5,41 @@ import { User } from '../models/User.js';
 
 export const classRouter = express.Router();
 
+// Get all classrooms
+classRouter.get('/user-classrooms', authMiddleware, async(req, res) => {
+    try {
+        const { uid } = req.user;
+
+        // Find the user to get their classroom IDs
+        const user = await User.findOne({ firebaseUid: uid });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        let classrooms = [];
+
+        // If user is a teacher, find classrooms where they are listed as a teacher
+        if (user.isTeacher) {
+            classrooms = await Classroom.find({ 
+                teachers: uid.toString() 
+            }).populate('quizzes');
+        } else {
+            // If user is a student, find classrooms where their _id is in the students array
+            if (user.classrooms && user.classrooms.length > 0) {
+                classrooms = await Classroom.find({
+                    _id: { $in: user.classrooms }
+                }).populate('quizzes');
+            }
+        }
+
+        res.status(200).json(classrooms);
+    } catch (error) {
+        console.error('Error fetching user classrooms:', error);
+        res.status(500).json({ error: 'Error fetching classrooms' });
+    }
+});
+
 // Create new classroom
 classRouter.post('/new-classroom', authMiddleware, async(req,res) => {
     console.log('req.user', req.user);
@@ -13,28 +48,28 @@ classRouter.post('/new-classroom', authMiddleware, async(req,res) => {
         const { uid } = req.user;
 
         // Get classroom info from req body and validate required fields
-        const { classDetails } = req.body;
+        const { classDetails, inviteCode } = req.body;
         console.log('classDetails', classDetails);
 
         const name = classDetails.name;
+        const subject = classDetails.subject;
+        const gradeLevel = classDetails.gradeLevel;
         const description = classDetails.description;
 
         if(!name) {
             return res.status(400).json({ error: 'Please provide a name for the classroom'});
         }
 
-        const generateInviteCode = () => { 
-            return Math.random().toString(36).slice(2, 8).toUpperCase();
-        }
-
         // Create new classroom
         const newClassroom = await Classroom.create({
             name,
+            subject,
+            gradeLevel,
             description,
             teachers: [uid.toString()],
             students: [],
             quizzes: [],
-            inviteCode: generateInviteCode()
+            inviteCode: inviteCode
         });
 
         const user = await User.findOne({ firebaseUid: uid });
@@ -101,5 +136,81 @@ classRouter.post('/join-classroom', authMiddleware, async(req,res) => {
     } catch (error) {
         console.error('Error joining classroom:', error);
         res.status(500).json({error: 'Error joining classroom'});
+    }
+});
+
+// Update classroom details
+classRouter.put('/update-classroom/:id', authMiddleware, async(req,res) => {
+    try {
+        const { id } = req.params;
+        const { classDetails } = req.body;
+
+        // Validate required fields
+        if (!classDetails.name || !classDetails.subject || !classDetails.gradeLevel) {
+            return res.status(400).json({ error: 'Please provide all required fields' });
+        }
+
+        // Create update object with all possible fields
+        const updateData = { 
+            name: classDetails.name, 
+            subject: classDetails.subject, 
+            gradeLevel: classDetails.gradeLevel, 
+            description: classDetails.description 
+        };
+        
+        // Add inviteCode to update if it's provided
+        if (classDetails.inviteCode) {
+            updateData.inviteCode = classDetails.inviteCode;
+        }
+
+        // Update classroom details
+        const updatedClassroom = await Classroom.findByIdAndUpdate(
+            id,
+            updateData,
+            { new: true }
+        );
+
+        if (!updatedClassroom) {
+            return res.status(404).json({ error: 'Classroom not found' });
+        }
+
+        res.status(200).json(updatedClassroom);
+    } catch (error) {
+        console.error('Error updating classroom:', error);
+        res.status(500).json({ error: 'Error updating classroom' });
+    }
+});
+
+// Delete classroom
+classRouter.delete('/delete-classroom/:id', authMiddleware, async(req, res) => {
+    try {
+        const { id } = req.params;
+        const { uid } = req.user;
+
+        // Find the classroom first to verify it exists and check permissions
+        const classroom = await Classroom.findById(id);
+        
+        if (!classroom) {
+            return res.status(404).json({ error: 'Classroom not found' });
+        }
+
+        // Verify the user is a teacher of this classroom
+        if (!classroom.teachers.includes(uid.toString())) {
+            return res.status(403).json({ error: 'Not authorized to delete this classroom' });
+        }
+
+        // Remove classroom references from all users who have it
+        await User.updateMany(
+            { classrooms: id },
+            { $pull: { classrooms: id } }
+        );
+        
+        // Delete the classroom
+        await Classroom.findByIdAndDelete(id);
+
+        res.status(200).json({ message: 'Classroom deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting classroom:', error);
+        res.status(500).json({ error: 'Error deleting classroom' });
     }
 });

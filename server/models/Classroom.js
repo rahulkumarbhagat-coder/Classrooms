@@ -5,6 +5,14 @@ const classroomSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    subject: {
+        type: String,
+        required: true
+    },
+    gradeLevel: {
+        type: String,
+        required: true
+    },
     description: {
         type: String,
     },

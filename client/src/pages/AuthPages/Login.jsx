@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../utils/authUtils";
 import AccountTypeModal from "../../components/modals/AccountTypeModal";
@@ -8,10 +9,28 @@ function Login() {
     
     const { handleLogin, signInWithGoogle, userData } = useAuth();
 
+    const [error, setError] = useState(null);
+
     // Log user in with AuthContext handleLogin function
     const handleSubmit = async (e) => {
         e.preventDefault();
-        handleLogin(e.target.elements.email.value, e.target.elements.password.value);
+        setError(null);
+
+        try {
+            await handleLogin(e.target.elements.email.value, e.target.elements.password.value);
+        } catch (err) {
+            // Handle different error types
+            switch (err.code) {
+                case 'auth/invalid-credential':
+                    setError('Invalid email or password');
+                    break;
+                case 'auth/too-many-requests':
+                    setError('Too many attempts, try again later');
+                    break;
+                default:
+                    setError('Login failed. Please try again');
+            }
+        }
     };
 
     
@@ -76,6 +95,9 @@ function Login() {
                             </div>
                         </div>
 
+                        {error && (
+                            <div className="text-red-500 text-sm mb-3">{error}</div>
+                        )}
 
                         <div className="flex justify-end">
                             <button

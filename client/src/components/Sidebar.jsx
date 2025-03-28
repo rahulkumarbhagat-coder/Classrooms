@@ -1,23 +1,13 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../utils/authUtils';
-import { getAuth, signOut } from 'firebase/auth';
 
 const Sidebar = () => {
 
-  const { userData } = useAuth();
+  const { userData, handleLogout } = useAuth();
   const [show, setShow] = useState(false)
   const [active, setActive] = useState(1)
 
-  const handleLogout = async () => {
-    const auth = getAuth();
-    try {
-        await signOut(auth);
-        window.location.reload();
-    } catch (error) {
-        console.log("Error signing out", error);
-    }
-}
   return (
     <div className='mr-1'>
       <div className="cursor-pointer absolute z-95 mt-5 mx-5">
