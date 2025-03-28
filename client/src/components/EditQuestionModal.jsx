@@ -22,9 +22,9 @@ const EditQuestionModal = ({ isOpen, onClose, question, onSave }) => {
   };
   return (
     <div>
-      <div className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-xs shadow-2xl">
-        <div className="bg-gray-100 p-6 rounded-2xl w-[600px]">
-          <h2 className="text-2xl font-bold mb-4">Edit Question</h2>
+      <div className="fixed inset-0 flex items-center justify-center z-95 backdrop-blur-xs shadow-2xl overflow-y-scroll">
+        <div className="bg-gray-100 p-6 rounded-2xl max-w-lg md:max-w-xl lg:max-w-2xl mx-4 md:mx-0">
+          <h2 className="text-lg md:text-2xl font-bold mb-4">Edit Question</h2>
 
           {/* Question Input */}
           <label className="block text-gray-700 text-sm font-bold mb-2">
@@ -34,21 +34,21 @@ const EditQuestionModal = ({ isOpen, onClose, question, onSave }) => {
             name="question_text"
             value={editedQuestion.question_text}
             onChange={handleChange}
-            className="w-full border-gray-200 border-2 p-4 mb-4 bg-white rounded-2xl shadow-xl font-semibold text-gray-700"
+            className="w-full border-gray-200 border-2 p-4 mb-4 bg-white rounded-2xl shadow-xl font-semibold text-gray-700 text-sm md:text-lg"
           />
 
           {/* Options Editing */}
           <label className="block text-gray-700 text-sm font-bold mb-2">
             {editedQuestion?.question_type === 'MCQ' ? 'Answer Options' : ''}
           </label>
-          <div className="space-y-2">
+          <div className="space-y-1 md:space-y-2">
             {editedQuestion.options?.map((option, index) => (
               <input
                 key={index}
                 type="text"
                 value={option}
                 onChange={(e) => handleOptionChange(index, e.target.value)}
-                className="min-w-[42] border-gray-200 border-2 p-2 m-3 bg-white rounded-2xl shadow-xl font-semibold text-cyy text-gray-700"
+                className="min-w-[42] border-gray-200 border-2 p-2 m-3 bg-white rounded-2xl shadow-xl font-semibold text-cyy text-gray-700 text-sm md:text-lg"
               />
             ))}
           </div>
@@ -65,7 +65,7 @@ const EditQuestionModal = ({ isOpen, onClose, question, onSave }) => {
             <input
               type="text"
               name="answer"
-              className="min-w-[42] border-gray-200 border-2 p-2 mb-1 bg-white rounded-2xl shadow-xl font-semibold text-cyy text-gray-700"
+              className="min-w-[42] border-gray-200 border-2 p-2 mb-1 bg-white rounded-2xl shadow-xl font-semibold text-cyy text-gray-700 text-sm md:text-lg"
               value={editedQuestion.answer}
               onChange={handleChange}
             />
@@ -76,13 +76,13 @@ const EditQuestionModal = ({ isOpen, onClose, question, onSave }) => {
           <div className="mt-4 flex justify-end space-x-3">
             <button
               onClick={onClose}
-              className="px-7 py-2 font-semibold bg-white text-gray-700 rounded-lg shadow-lg"
+              className="px-3 md:px-7 py-2 font-semibold bg-white text-gray-700 text-sm md:text-lg rounded-lg shadow-lg"
             >
               Cancel
             </button>
             <button
               onClick={() => onSave(editedQuestion)}
-              className="px-7 py-2 font-semibold bg-black text-white rounded-lg"
+              className="px-3 md:px-7 py-2 font-semibold bg-black text-white text-sm md:text-lg rounded-lg"
             >
               Save Changes
             </button>

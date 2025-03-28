@@ -89,7 +89,7 @@ const ReviewQuiz = () => {
 
   return (
     <div className='w-full max-h-[100vh] flex flex-col items-end'>
-      <div className="w-[77%]">
+      <div className="w-full md:w-[77%]">
         <div className="p-6 flex flex-col gap-6">
         {isOpen && <EditQuestionModal onSave={handleSaveChanges} isOpen={isOpen} question={selectedQuestion} onClose={onClose}/>}
         <Header/>
@@ -104,7 +104,7 @@ const ReviewQuiz = () => {
           </ul>
         </div>
 
-        <div className="bg-white p-6 rounded-2xl shadow-md mb-2">
+        <div className="bg-white p-3 md:p-6 rounded-2xl shadow-md mb-2">
       <h3 className="text-2xl font-semibold text-left">Review Questions</h3>
       <div className="mt-4 p-3 space-y-4 border-t-2 border-[#CFCFCF] text-left">
       {[
@@ -116,19 +116,19 @@ const ReviewQuiz = () => {
         <div key={sectionIndex}>
           <h4 className="text-lg font-bold text-gray-800 mt-4">{section.title}</h4>
           {section.data.map((question, index) => (
-            <div key={`${sectionIndex}-${index}`} className="border border-gray-300 rounded-lg p-4">
+            <div key={`${sectionIndex}-${index}`} className="border border-gray-300 rounded-lg p-2 md:p-4">
               <div className="flex justify-between items-start">
-                <p className="text-gray-800 font-semibold">{index + 1}. {question.question_text}</p>
+                <p className="text-gray-800 font-semibold text-sm md:text-lg w-[95%]">{index + 1}. {question.question_text}</p>
                 <button className="hover:underline cursor-pointer" onClick={()=> handleEditClick(question)}><img src="Vector.svg" alt="" /></button>
               </div>
               {question.options?.length > 0 && (
                 <>
-                <ul className="list-disc list-inside mt-2 text-gray-700">
+                <ul className="flex flex-col gap-3 md:gap-0 list-disc list-inside mt-2 text-gray-700 text-sm md:text-lg">
                   {question.options.map((option, i) => (
                     <li key={i}>{option}</li>
                   ))}
                 </ul>
-                <p className='text-gray-800 text-sm font-semibold pt-2'>Answer: {question.answer}</p>
+                <p className='text-gray-800 text-xs md:text-sm font-semibold pt-2'>Answer: {question.answer}</p>
                 </>
               )}
               {question.question_type === 'True/False' && question?.answer?.length > 0 && (
@@ -144,9 +144,9 @@ const ReviewQuiz = () => {
       </div>
     </div>
     <div className="flex justify-center space-x-4">
-          <button className="px-7 py-2 font-semibold bg-white text-gray-700 hover:bg-black hover:text-white shadow-xl rounded-lg" onClick={()=> navigate('/')}>Save as Draft</button>
-          <button className="px-7 py-2 font-semibold bg-white text-gray-700 hover:bg-black hover:text-white shadow-xl rounded-lg">Regenerate Quiz</button>
-          <button className="px-7 py-2 font-semibold bg-white text-gray-700 hover:bg-black hover:text-white shadow-xl rounded-lg" onClick={()=> navigate('/quiz-setting')}>Continue</button>
+          <button className="w-[33%] md:w-[25%] px-3 md:px-7 py-2 font-semibold bg-white text-gray-700 text-xs lg:text-lg hover:bg-black hover:text-white shadow-xl rounded-lg" onClick={()=> navigate('/')}>Save as Draft</button>
+          <button className="w-[33%] md:w-[25%] px-3 md:px-7 py-2 font-semibold bg-white text-gray-700 text-xs lg:text-lg hover:bg-black hover:text-white shadow-xl rounded-lg">Regenerate Quiz</button>
+          <button className="w-[33%] md:w-[25%] px-3 md:px-7 py-2 font-semibold bg-white text-gray-700 text-xs lg:text-lg hover:bg-black hover:text-white shadow-xl rounded-lg" onClick={()=> navigate('/quiz-setting')}>Continue</button>
         </div>
         </div>
       </div>
