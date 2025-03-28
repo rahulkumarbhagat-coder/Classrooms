@@ -11,7 +11,7 @@ const QuizHistory = () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        'Authorization': `Bearer ${token}`,
       },
     });
     const userQuiz = await response.json();
@@ -28,15 +28,15 @@ const QuizHistory = () => {
 
   return (
     <div className="w-full max-h-[100vh] flex flex-col items-end">
-      <div className="w-[77%]">
+      <div className="w-full md:w-[77%]">
         <div className="p-6 flex flex-col gap-6">
           <h2 className="text-2xl font-semibold mb-2">Your Quizzes</h2>
         <div className="bg-white p-6 rounded-xl shadow-md flex flex-col min-h-40">
           {userQuiz? userQuiz?.map((quiz, index) => (
             <div key={index} className="flex flex-col gap-2 text-left">
-              <div className="flex items-center space-x-2 mb-2">
-                <span className="text-gray-500">⏺</span>
-                <h3 className="text-lg font-semibold cursor-pointer">{quiz?.generatedQuiz?.quiz_details?.topic}</h3>
+              <div className="flex flex-col md:flex-row items-center space-x-2 mb-2">
+                
+                <h3 className="text-lg font-semibold cursor-pointer"><span className="text-gray-500 mr-1">⏺</span>{quiz?.generatedQuiz?.quiz_details?.topic}</h3>
                 <p>{quiz?.generatedQuiz?.quiz_details?.difficulty} Difficulty |</p>
                 <p>{quiz?.generatedQuiz?.quiz_details?.number_of_questions} Questions |</p>
                 <p>Type : {quiz?.generatedQuiz?.quiz_details?.type}</p>

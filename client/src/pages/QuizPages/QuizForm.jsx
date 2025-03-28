@@ -11,6 +11,7 @@ const QuizForm = () => {
     const [loading, setLoading] = useState(false)
     const [load, setLoad] = useState()
     const [image, setImage] = useState(false)
+    const [classrooms, setClassrooms] = useState([])
     const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'
     const abortControllerRef = useRef(null)
 
@@ -36,6 +37,7 @@ const QuizForm = () => {
             const difficulty = quizData.difficulty;
             const type = quizData.questionTypes;
             const questions = quizData.numQuestions;
+            const classroom = quizData.class;
 
             setLoading(true)
             abortControllerRef.current = new AbortController()
@@ -48,6 +50,7 @@ const QuizForm = () => {
             userInput.append("difficulty", difficulty)
             userInput.append("type", type)
             userInput.append("noOfQuestions", questions)
+            userInput.append("classroom", classroom)
 
 
             let progress = 10
@@ -113,7 +116,7 @@ const QuizForm = () => {
 
   return (
     <div className="w-full max-h-[100vh] flex flex-col items-end">
-      <div className="w-[77%]">
+      <div className="w-full md:w-[77%]">
         <div className="p-6 flex flex-col gap-6">
             {/* Header */}
             <Header/>
@@ -137,8 +140,8 @@ const QuizForm = () => {
               name="title"
               value={quizData.title}
               onChange={handleChange}
-              placeholder="Enter a descriptive title for your quiz"
-              className="w-full p-3 border-gray-200 border-2 bg-white rounded-2xl shadow-xl mt-1 font-semibold"
+              placeholder="Enter a descriptive title"
+              className="w-full p-3 border-gray-200 border-2 bg-white rounded-2xl shadow-xl mt-1 font-semibold text-sm md:text-lg"
             />
     
             <label className="block font-semibold text-lg mt-4">Class</label>
@@ -149,8 +152,9 @@ const QuizForm = () => {
               className="w-56 border-gray-200 border-2 bg-white rounded-2xl shadow-xl p-3 mt-1 font-semibold text-gray-600"
             >
               <option value="" className='border-gray-200 border-2 bg-white rounded-2xl shadow-xl p-3 font-semibold'>Select class</option>
-              <option value="Class 10" className='border-gray-200 border-2 bg-white rounded-2xl shadow-xl p-3 font-semibold'>Class 10</option>
-              <option value="Class 12" className='border-gray-200 border-2 bg-white rounded-2xl shadow-xl p-3 font-semibold'>Class 12</option>
+              {classrooms?.map((classroom, index) =>(
+                <option value="Class 10" className='border-gray-200 border-2 bg-white rounded-2xl shadow-xl p-3 font-semibold'>{classroom.name}</option>
+              ))}
             </select>
     
             <label className="block font-semibold text-lg mt-4">Quiz Description</label>
@@ -187,8 +191,8 @@ const QuizForm = () => {
               name="topic"
               value={quizData.topic}
               onChange={handleChange}
-              placeholder="E.g., Algebra, Biology, Cell Structure"
-              className="w-full border-gray-200 border-2 bg-white rounded-2xl shadow-xl p-3 font-semibold mt-1"
+              placeholder="E.g., Algebra, Biology..."
+              className="w-full border-gray-200 border-2 bg-white rounded-2xl shadow-xl p-3 font-semibold text-sm md:text-lg mt-1"
             />
     
             <label className="block font-semibold text-lg mt-4">
@@ -220,7 +224,7 @@ const QuizForm = () => {
     
             {/* Difficulty Level */}
             <label className="block font-semibold text-lg mb-2">Difficulty Level</label>
-            <div className="flex gap-5 mb-8">
+            <div className="flex flex-col md:flex-row gap-5 mb-8">
               {["Easy", "Medium", "Hard"].map((level) => (
                 <div
                   key={level}
@@ -262,7 +266,7 @@ const QuizForm = () => {
     
             {/* Question Types */}
             <label className="block font-semibold text-lg mt-4 mb-2">Question Types</label>
-            <div className="flex gap-3 mb-8">
+            <div className="flex flex-col md:flex-row gap-3 mb-8">
               {["Multiple Choice", "True/False", "Short Answer", "Essay"].map((type) => (
                 <div
                   key={type}

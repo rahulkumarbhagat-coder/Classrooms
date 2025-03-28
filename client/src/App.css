@@ -5,3 +5,12 @@
   text-align: center;
   background-color: var(--color-gray-300);
 }
+
+@keyframes upDown{
+  0%, 100%{
+    transform: translateY(0);
+  }
+  50%{
+    transform: translateY(-20px)
+  }
+}

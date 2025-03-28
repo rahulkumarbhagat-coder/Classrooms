@@ -6,8 +6,8 @@ const AllResult = () => {
     
   return (
     <div className='w-full max-h-[100vh] flex flex-col items-end'>
-      <div className="w-[77%]">
-        <div className="grid grid-cols-3 gap-20 p-6 mx-3">
+      <div className="w-full md:w-[77%]">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-20 p-6 mx-3">
             {quizData?.results?.map((resultData, index)=> (
               <div key={index} className="flex items-center justify-center bg-opacity-20">
               <div className="bg-white text-black p-3 rounded-3xl shadow-lg w-80 relative flex flex-col items-center ">

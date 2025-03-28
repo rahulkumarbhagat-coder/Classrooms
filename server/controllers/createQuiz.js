@@ -51,7 +51,7 @@ import { Classroom } from "../models/Classroom.js";
         difficulty: userInput.difficulty,
           type: userInput.type,
           number: userInput.noOfQuestion,
-          classroom: userInput.classroom,
+          classroom: classroomId,
           isInClassroom: isInClassroom,
           generatedQuiz: generatedQuiz
       })

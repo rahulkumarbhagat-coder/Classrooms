@@ -1,4 +1,3 @@
-import { Classroom } from "../models/Classroom.js"
 import { Quiz } from "../models/Quiz.js"
 import { User } from "../models/User.js"
 
