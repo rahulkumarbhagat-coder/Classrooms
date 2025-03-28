@@ -4,7 +4,7 @@ import { useAuth } from '../utils/authUtils';
 
 const Sidebar = () => {
 
-  const { userData } = useAuth();
+  const { userData, handleLogout } = useAuth();
   const [show, setShow] = useState(false)
   const [active, setActive] = useState(1)
 
