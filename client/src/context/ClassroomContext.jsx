@@ -232,6 +232,7 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
             classroomData,
             setClassroomData,
             fetchClassrooms,
+            generateInviteCode,
             createClassroom,
             joinClassroom,
             updateClassroom,

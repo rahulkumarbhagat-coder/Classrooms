@@ -7,7 +7,7 @@ const ClassroomDashboard = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const { classroomData, updateClassroom } = useClassroom();
+    const { classroomData, updateClassroom, generateInviteCode } = useClassroom();
     const { userData } = useAuth();
 
     const [activeTab, setActiveTab] = useState('overview');
@@ -63,33 +63,50 @@ const ClassroomDashboard = () => {
             return;
         }
 
-            const name = e.target.elements.name.value.trim();
-            const subject = e.target.elements.subject.value.trim();
-            const gradeLevel = e.target.elements.gradeLevel.value.trim();
-            const description = e.target.elements.description.value.trim();
+        const name = e.target.elements.name.value.trim();
+        const subject = e.target.elements.subject.value.trim();
+        const gradeLevel = e.target.elements.gradeLevel.value.trim();
+        const description = e.target.elements.description.value.trim();
 
-            const classDetails = {
-                name,
-                subject,
-                gradeLevel,
-                description,
-            }
+        const classDetails = {
+            name,
+            subject,
+            gradeLevel,
+            description,
+        }
 
-            console.log('CD: ',classDetails);
-            console.log(classroom)
-            try{
-                await updateClassroom(classroom._id ,classDetails);
-                alert(`${classDetails.name} classroom updated successfully!`);
-                e.target.reset();
+        console.log('CD: ',classDetails);
+        console.log(classroom)
+        try{
+            await updateClassroom(classroom._id ,classDetails);
+            alert(`${classDetails.name} classroom updated successfully!`);
+            e.target.reset();
 
-                window.location.reload();
-            } catch(err) {  
-                console.error(err);
-                alert('Error updating classroom');
-            }
-
+            window.location.reload();
+        } catch(err) {  
+            console.error(err);
+            alert('Error updating classroom');
+        }
     }
 
+    const generateNewInviteCode = async () => {
+        const newCode = await generateInviteCode();
+        console.log("New invite code:", newCode);
+        try {
+            await updateClassroom(classroom._id, { 
+                inviteCode: newCode,
+                name: classroom.name,
+                subject: classroom.subject,
+                gradeLevel: classroom.gradeLevel,
+                description: classroom.description
+            });
+            console.log("Invite code updated successfully");
+        } catch (error) {  
+            console.error("Error generating new invite code:", error);
+            alert('Error generating new invite code');
+        }
+    }
+    
     return (
         <div className="flex-grow h-screen bg-gray-300 pl-72 overflow-y-auto">
             {/* Header Section */}
@@ -191,6 +208,13 @@ const ClassroomDashboard = () => {
                                                     <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
                                                 </svg>
                                             </button>
+                                            <button 
+                                                className="ml-2 text-blue-600 hover:text-blue-800"
+                                                onClick={generateNewInviteCode}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                    <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+                                                </svg>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -221,27 +245,6 @@ const ClassroomDashboard = () => {
                                 <p className="text-3xl font-bold">{classroom.teachers ? classroom.teachers.length : 0}</p>
                             </div>
                         </div>
-
-                        {/* Quick Actions */}
-                        {userData.isTeacher && (
-                            <div className="bg-white rounded-2xl shadow-sm p-6"
-                                style={{ 
-                                    boxShadow: "0 -1px 4px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.15)"
-                                }}>
-                                <h2 className="text-lg font-medium mb-4">Quick Actions</h2>
-                                <div className="flex flex-wrap gap-3">
-                                    <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                                        Create New Quiz
-                                    </button>
-                                    <button className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
-                                        Invite Students
-                                    </button>
-                                    <button className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700">
-                                        View Reports
-                                    </button>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 )}
 
@@ -338,7 +341,7 @@ const ClassroomDashboard = () => {
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-lg font-medium">Quizzes</h2>
                             {userData.isTeacher && (
-                                <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                <button className="px-4 py-2 bg-black text-white rounded-md hover:bg-gray-700">
                                     Create Quiz
                                 </button>
                             )}
@@ -351,7 +354,7 @@ const ClassroomDashboard = () => {
                                 </svg>
                                 <p className="mt-4 text-gray-500">No quizzes have been created for this class yet</p>
                                 {userData.isTeacher && (
-                                    <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                    <button className="mt-4 px-4 py-2 bg-black text-white rounded-md hover:bg-gray-700 hover:cursor-pointer">
                                         Create Your First Quiz
                                     </button>
                                 )}
@@ -491,8 +494,8 @@ const ClassroomDashboard = () => {
                                 <span className="font-mono bg-gray-100 px-3 py-2 rounded mr-2">{classroom.inviteCode}</span>
                                 <button 
                                     type="button"
-                                    className="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-                                >
+                                    onClick={generateNewInviteCode}
+                                    className="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
                                     Regenerate
                                 </button>
                             </div>

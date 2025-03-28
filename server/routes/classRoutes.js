@@ -150,15 +150,23 @@ classRouter.put('/update-classroom/:id', authMiddleware, async(req,res) => {
             return res.status(400).json({ error: 'Please provide all required fields' });
         }
 
+        // Create update object with all possible fields
+        const updateData = { 
+            name: classDetails.name, 
+            subject: classDetails.subject, 
+            gradeLevel: classDetails.gradeLevel, 
+            description: classDetails.description 
+        };
+        
+        // Add inviteCode to update if it's provided
+        if (classDetails.inviteCode) {
+            updateData.inviteCode = classDetails.inviteCode;
+        }
+
         // Update classroom details
         const updatedClassroom = await Classroom.findByIdAndUpdate(
             id,
-            { 
-                name: classDetails.name, 
-                subject: classDetails.subject, 
-                gradeLevel: classDetails.gradeLevel, 
-                description: classDetails.description 
-            },
+            updateData,
             { new: true }
         );
 
