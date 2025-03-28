@@ -206,6 +206,53 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
         }
     };
 
+    // Delete classroom
+    const deleteClassroom = async (classroomId) => {
+        if (!userData.user) return;
+
+        setClassroomData(prev => ({
+            ...prev,
+            loading: true
+        }));
+
+        try {
+            const token = await userData.user.getIdToken();
+            const response = await fetch(`${BASE_URL}class/delete-classroom/${classroomId}`, {
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete classroom');
+            }
+
+            // Remove the deleted classroom from state
+            setClassroomData(prev => ({
+                ...prev,
+                classrooms: prev.classrooms.filter(classroom => 
+                    classroom._id !== classroomId
+                ),
+                // If the deleted classroom was the current one, set currentClassroom to null
+                currentClassroom: prev.currentClassroom?._id === classroomId 
+                    ? null 
+                    : prev.currentClassroom,
+                loading: false
+            }));
+
+            return true; // Return success
+        } catch (error) {
+            console.error("Error deleting classroom:", error);
+            setClassroomData(prev => ({
+                ...prev,
+                error: error.message,
+                loading: false
+            }));
+            throw error;
+        }
+    };
+
     // Load classrooms when user auth changes
     useEffect(() => {
         if (userData.user && !userData.loading) {
@@ -236,6 +283,7 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
             createClassroom,
             joinClassroom,
             updateClassroom,
+            deleteClassroom,
         }}>
             {children}
         </ClassroomContext.Provider>

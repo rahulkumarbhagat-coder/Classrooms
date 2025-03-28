@@ -180,3 +180,37 @@ classRouter.put('/update-classroom/:id', authMiddleware, async(req,res) => {
         res.status(500).json({ error: 'Error updating classroom' });
     }
 });
+
+// Delete classroom
+classRouter.delete('/delete-classroom/:id', authMiddleware, async(req, res) => {
+    try {
+        const { id } = req.params;
+        const { uid } = req.user;
+
+        // Find the classroom first to verify it exists and check permissions
+        const classroom = await Classroom.findById(id);
+        
+        if (!classroom) {
+            return res.status(404).json({ error: 'Classroom not found' });
+        }
+
+        // Verify the user is a teacher of this classroom
+        if (!classroom.teachers.includes(uid.toString())) {
+            return res.status(403).json({ error: 'Not authorized to delete this classroom' });
+        }
+
+        // Remove classroom references from all users who have it
+        await User.updateMany(
+            { classrooms: id },
+            { $pull: { classrooms: id } }
+        );
+        
+        // Delete the classroom
+        await Classroom.findByIdAndDelete(id);
+
+        res.status(200).json({ message: 'Classroom deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting classroom:', error);
+        res.status(500).json({ error: 'Error deleting classroom' });
+    }
+});

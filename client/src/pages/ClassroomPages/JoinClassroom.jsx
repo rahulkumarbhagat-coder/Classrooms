@@ -104,37 +104,27 @@ function JoinClassroom() {
                         </div>
 
                         {/* Help Section */}
-                        <div className="mt-6 pt-4 border-t border-gray-200">
+                        <div className="my-6 pt-4 border-t border-gray-200">
                             <div className="flex items-center text-sm text-gray-600">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                <span>Can't find your code? Ask your teacher for help.</span>
+                                <span>Can&apos;t find your code? Ask your teacher for help.</span>
                             </div>
                         </div>
-                    </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex justify-center space-x-4">
-                        <button 
-                            type="button"
-                            className="px-6 py-2 bg-white border border-gray-300 rounded-md font-medium text-gray-700 hover:bg-gray-50 hover:cursor-pointer"
-                            style={{ 
-                                boxShadow: "0 -1px 4px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.15)"
-                            }}
-                        >
-                            Cancel
-                        </button>
                         <button
                             type="submit"
                             className="bg-black text-white px-6 py-2 rounded-md font-medium hover:bg-gray-800 hover:cursor-pointer"
                             style={{ 
                                 boxShadow: "0 -1px 4px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.15)"
                             }}
-                        >
+                            >
                             Join Classroom
                         </button>
+
                     </div>
+
                 </form>
             </div>
         </div>

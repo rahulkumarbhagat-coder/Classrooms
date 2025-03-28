@@ -7,7 +7,7 @@ const ClassroomDashboard = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const { classroomData, updateClassroom, generateInviteCode } = useClassroom();
+    const { classroomData, updateClassroom, generateInviteCode, deleteClassroom } = useClassroom();
     const { userData } = useAuth();
 
     const [activeTab, setActiveTab] = useState('overview');
@@ -86,6 +86,13 @@ const ClassroomDashboard = () => {
         } catch(err) {  
             console.error(err);
             alert('Error updating classroom');
+        }
+    }
+
+    const handleDelete = async () => {
+        window.confirm("Are you sure you want to delete this classroom?")
+        if(window.confirm) {
+            deleteClassroom(classroom._id);
         }
     }
 
@@ -495,7 +502,7 @@ const ClassroomDashboard = () => {
                                 <button 
                                     type="button"
                                     onClick={generateNewInviteCode}
-                                    className="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+                                    className="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 hover:cursor-pointer">
                                     Regenerate
                                 </button>
                             </div>
@@ -508,7 +515,8 @@ const ClassroomDashboard = () => {
                             <h3 className="text-sm font-medium text-gray-700 mb-4">Danger Zone</h3>
                             <button 
                                 type="button"
-                                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                                onClick={handleDelete}
+                                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 hover:cursor-pointer"
                             >
                                 Delete Class
                             </button>
