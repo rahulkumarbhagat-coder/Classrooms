@@ -27,7 +27,7 @@ export const AuthProvider = ({ children }) => {
         if (!user) return null;
 
         try {
-            const response = await fetch(`${BASE_URL}:5000/auth/user`, {
+            const response = await fetch(`${BASE_URL}auth/user`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -175,7 +175,7 @@ export const AuthProvider = ({ children }) => {
 
             const token = await user.getIdToken();
 
-            const response = await fetch('http://localhost:5000/auth/new-user', {
+            const response = await fetch(`${BASE_URL}auth/new-user`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

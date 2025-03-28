@@ -32,7 +32,7 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
 
         try {
             const token = await userData.user.getIdToken();
-            const response = await fetch(`${BASE_URL}/classroom/user-classrooms`, {
+            const response = await fetch(`${BASE_URL}class/user-classrooms`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -60,6 +60,11 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
         }
     }, [userData.user, BASE_URL]);
 
+    // Generate a random 6 charachter invite code
+    const generateInviteCode = () => { 
+        return Math.random().toString(36).slice(2, 8).toUpperCase();
+    }
+
     // Create a new classroom
     const createClassroom = async (classDetails) => {
 
@@ -68,15 +73,17 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
             loading: true
         }));
 
+        const inviteCode = generateInviteCode();
+
         try {
             const token = await userData.user.getIdToken();
-            const response = await fetch(`${BASE_URL}/class/new-classroom`, {
+            const response = await fetch(`${BASE_URL}class/new-classroom`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ classDetails })
+                body: JSON.stringify({ classDetails, inviteCode })
             });
 
             if (!response.ok) {
@@ -116,7 +123,7 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
 
         try {
             const token = await userData.user.getIdToken();
-            const response = await fetch(`${BASE_URL}/class/join-classroom`, {
+            const response = await fetch(`${BASE_URL}class/join-classroom`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -141,6 +148,55 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
             return classroom;
         } catch (error) {
             console.error("Error joining classroom:", error);
+            setClassroomData(prev => ({
+                ...prev,
+                error: error.message,
+                loading: false
+            }));
+            throw error;
+        }
+    };
+
+    // Update classroom details
+    const updateClassroom = async (classroomId, classDetails) => {
+        if (!userData.user) return;
+
+        setClassroomData(prev => ({
+            ...prev,
+            loading: true
+        }));
+
+        try {
+            const token = await userData.user.getIdToken();
+            const response = await fetch(`${BASE_URL}class/update-classroom/${classroomId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({classDetails})
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update classroom');
+            }
+
+            const updatedClassroom = await response.json();
+            
+            setClassroomData(prev => ({
+                ...prev,
+                classrooms: prev.classrooms.map(classroom => 
+                    classroom._id === classroomId ? updatedClassroom : classroom
+                ),
+                currentClassroom: prev.currentClassroom?._id === classroomId 
+                    ? updatedClassroom 
+                    : prev.currentClassroom,
+                loading: false
+            }));
+
+            return updatedClassroom;
+        } catch (error) {
+            console.error("Error updating classroom:", error);
             setClassroomData(prev => ({
                 ...prev,
                 error: error.message,
@@ -178,6 +234,7 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
             fetchClassrooms,
             createClassroom,
             joinClassroom,
+            updateClassroom,
         }}>
             {children}
         </ClassroomContext.Provider>

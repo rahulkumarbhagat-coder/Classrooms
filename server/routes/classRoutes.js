@@ -48,7 +48,7 @@ classRouter.post('/new-classroom', authMiddleware, async(req,res) => {
         const { uid } = req.user;
 
         // Get classroom info from req body and validate required fields
-        const { classDetails } = req.body;
+        const { classDetails, inviteCode } = req.body;
         console.log('classDetails', classDetails);
 
         const name = classDetails.name;
@@ -60,10 +60,6 @@ classRouter.post('/new-classroom', authMiddleware, async(req,res) => {
             return res.status(400).json({ error: 'Please provide a name for the classroom'});
         }
 
-        const generateInviteCode = () => { 
-            return Math.random().toString(36).slice(2, 8).toUpperCase();
-        }
-
         // Create new classroom
         const newClassroom = await Classroom.create({
             name,
@@ -73,7 +69,7 @@ classRouter.post('/new-classroom', authMiddleware, async(req,res) => {
             teachers: [uid.toString()],
             students: [],
             quizzes: [],
-            inviteCode: generateInviteCode()
+            inviteCode: inviteCode
         });
 
         const user = await User.findOne({ firebaseUid: uid });
@@ -140,5 +136,39 @@ classRouter.post('/join-classroom', authMiddleware, async(req,res) => {
     } catch (error) {
         console.error('Error joining classroom:', error);
         res.status(500).json({error: 'Error joining classroom'});
+    }
+});
+
+// Update classroom details
+classRouter.put('/update-classroom/:id', authMiddleware, async(req,res) => {
+    try {
+        const { id } = req.params;
+        const { classDetails } = req.body;
+
+        // Validate required fields
+        if (!classDetails.name || !classDetails.subject || !classDetails.gradeLevel) {
+            return res.status(400).json({ error: 'Please provide all required fields' });
+        }
+
+        // Update classroom details
+        const updatedClassroom = await Classroom.findByIdAndUpdate(
+            id,
+            { 
+                name: classDetails.name, 
+                subject: classDetails.subject, 
+                gradeLevel: classDetails.gradeLevel, 
+                description: classDetails.description 
+            },
+            { new: true }
+        );
+
+        if (!updatedClassroom) {
+            return res.status(404).json({ error: 'Classroom not found' });
+        }
+
+        res.status(200).json(updatedClassroom);
+    } catch (error) {
+        console.error('Error updating classroom:', error);
+        res.status(500).json({ error: 'Error updating classroom' });
     }
 });

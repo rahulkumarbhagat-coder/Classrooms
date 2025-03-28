@@ -11,7 +11,9 @@ import ResetPassword from './pages/AuthPages/ResetPassword.jsx';
 import NewPassword from './pages/AuthPages/NewPassword.jsx';
 import CreateClassroom from './pages/ClassroomPages/CreateClassroom.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
+import { ClassroomProvider } from './context/ClassroomContext.jsx';
 import JoinClassroom from './pages/ClassroomPages/JoinClassroom.jsx';
+import ClassroomDashboard from './pages/ClassroomPages/ClassroomDashboard.jsx';
 import DisplayQuiz from './pages/QuizPages/DisplayQuiz.jsx';
 import StudentResults from './pages/QuizPages/StudentResults.jsx';
 import QuizSetting from './pages/QuizPages/QuizSetting.jsx';
@@ -55,6 +57,10 @@ const router = createBrowserRouter([
         element: <JoinClassroom />
       },
       {
+        path: '/classroom/:id',
+        element: <ClassroomDashboard />
+      },
+      {
         path: '/review-quiz',
         element: <ReviewQuiz />
       },
@@ -77,7 +83,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <AuthProvider>
-      <RouterProvider router={router} />
+      <ClassroomProvider>
+        <RouterProvider router={router} />
+      </ClassroomProvider>
     </AuthProvider>
   </StrictMode>,
 );

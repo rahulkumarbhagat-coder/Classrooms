@@ -68,7 +68,7 @@ function Register() {
             
             // Get authentication token
             const token = await firebaseUser.getIdToken();
-            const response = await fetch(`${BASE_URL}/auth/new-user`, {
+            const response = await fetch(`${BASE_URL}auth/new-user`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
