@@ -185,7 +185,7 @@ const DisplayQuiz = () => {
           <p className="mb-4 pt-2 text-green-200 text-lg">
             {currentQuestion.question_text}
           </p>
-          {currentQuestion.question_type === "Written" && (
+          {(currentQuestion.question_type === "Written" || currentQuestion.question_type === "Short Answer" || currentQuestion.question_type === "Essay") && (
             <textarea
               onChange={(e) =>
                 handleWrittenAnswer(

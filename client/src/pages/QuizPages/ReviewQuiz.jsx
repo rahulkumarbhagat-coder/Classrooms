@@ -3,8 +3,10 @@ import Header from '../../components/Header'
 import { useNavigate } from 'react-router-dom'
 import quizStore from '../../store/quizStore'
 import EditQuestionModal from '../../components/EditQuestionModal'
+import { useAuth } from '../../utils/authUtils'
 
 const ReviewQuiz = () => {
+    const { userData } = useAuth();
     const quizData = quizStore((state) => state.quizData)
     const newQuiz = quizStore((state) => state.newQuiz)
     const setAllQuiz = quizStore((state => state.setAllQuiz))
@@ -36,10 +38,12 @@ const ReviewQuiz = () => {
           "generatedQuiz.quiz_questions": updatedQuestions
         }
       }
+      const token = await userData.user.getIdToken();
       const response = await fetch(`${BASE_URL}/quiz/update-quiz`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(updatedQuiz)
       })
@@ -73,18 +77,18 @@ const ReviewQuiz = () => {
     const written = []
     
     quizData?.generatedQuiz?.quiz_questions?.forEach(question => {
-      if (question.question_type === 'MCQ'){
+      if (question.question_type === 'MCQ' || question.question_type === 'Multiple Choice'){
         mcq.push(question)
       } else if (question.question_type === 'True/False') {
         tf.push(question);
-      } else if (question.question_type === 'Written') {
+      } else if (question.question_type === 'Written' || question.question_type === 'Essay' || question.question_type === 'Short Answer') {
         written.push(question);
       }
     })
 
     setMcqQuestion(mcq)
     setTfQuestion(tf)
-    setWrittenQuestion(written)
+    setWrittenQuestion(written)    
   },[quizData])
 
   return (
@@ -95,7 +99,7 @@ const ReviewQuiz = () => {
         <Header/>
       {/* Quiz Details */}
       <div className="bg-white p-6 rounded-2xl shadow-md mb-6">
-          <h3 className="text-2xl font-semibold text-left">{quizData?.generatedQuiz?.quiz_details?.topic}<span className="text-gray-500 text-sm m-5"></span></h3>
+          <h3 className="text-2xl font-semibold text-left">{quizData?.title || "Untitled Quiz"}<span className="text-gray-500 text-sm m-5"></span></h3>
           <ul className="text-gray-600 mt-2 text-left">
             <li>• {quizData?.generatedQuiz?.quiz_details?.number_of_questions} questions</li>
             <li>• {quizData?.generatedQuiz?.quiz_details?.difficulty} difficulty</li>

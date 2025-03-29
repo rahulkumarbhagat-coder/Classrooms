@@ -156,9 +156,8 @@ const QuizForm = () => {
               className="w-56 border-gray-200 border-2 bg-white rounded-2xl shadow-xl p-3 mt-1 font-semibold text-gray-600"
             >
               <option value="" className='border-gray-200 border-2 bg-white rounded-2xl shadow-xl p-3 font-semibold'>Select class</option>
-              {classrooms?.map((classroom, index) =>(
-                <option value="Class 10" className='border-gray-200 border-2 bg-white rounded-2xl shadow-xl p-3 font-semibold'>{classroom.name}</option>
-              ))}
+              <option value="" className='border-gray-200 border-2 bg-white rounded-2xl shadow-xl p-3 font-semibold'>Physics Class 2nd Year</option>
+              
             </select>
     
             <label className="block font-semibold text-lg mt-4">Quiz Description</label>
