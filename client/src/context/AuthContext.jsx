@@ -1,13 +1,15 @@
 import { useState, useEffect } from "react";
 import { AuthContext } from "../utils/authUtils";
 import { auth } from '../firebase/config';
-import { onAuthStateChanged, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { onAuthStateChanged, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 
 // eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
     if (children === undefined) {
         throw new Error('AuthProvider requires a children prop');
     }
+
+    const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
 
     const [userData, setUserData] = useState({
         user: null,
@@ -25,7 +27,7 @@ export const AuthProvider = ({ children }) => {
         if (!user) return null;
 
         try {
-            const response = await fetch('http://localhost:5000/auth/user', {
+            const response = await fetch(`${BASE_URL}auth/user`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -90,15 +92,14 @@ export const AuthProvider = ({ children }) => {
         }));
         try {
             const user = await signInWithEmailAndPassword(auth,email,password);
-            if(user.user.isTeacher !== undefined) {
                 setUserData(prev => ({
                     ...prev,
                     user: user.user 
                 }));
                 window.location.href = '/';
-            }
         } catch(error) {
             console.error('Login error:', error);
+            throw error;
         } finally {
             setUserData(prev => ({
                 ...prev,
@@ -172,7 +173,7 @@ export const AuthProvider = ({ children }) => {
 
             const token = await user.getIdToken();
 
-            const response = await fetch('http://localhost:5000/auth/new-user', {
+            const response = await fetch(`${BASE_URL}auth/new-user`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -205,8 +206,27 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
+    const handleLogout = () => {
+        signOut(auth).then(() => {
+            setUserData(prev => ({
+                ...prev,
+                user: null,
+                firstName: '',
+                lastName: '',
+                email: '',
+                isTeacher: false,
+                classrooms: [],
+                quizzes: [],
+                showAccountTypeModal: false
+            }));
+            window.location.reload();
+        }).catch((error) => {
+            console.error('Logout error:', error);
+        });
+    }
+
     return (
-        <AuthContext.Provider value={{ userData, setUserData, handleLogin, signInWithGoogle, handleAccountSelection }}>
+        <AuthContext.Provider value={{ userData, setUserData, handleLogin, handleLogout, signInWithGoogle, handleAccountSelection }}>
             {children}
         </AuthContext.Provider>
     );
