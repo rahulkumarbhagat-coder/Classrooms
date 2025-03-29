@@ -60,7 +60,7 @@ const QuizSetting = () => {
             <Header/>
             {/* Quiz Details */}
         <div className="bg-white p-6 rounded-2xl shadow-md mb-6">
-          <h3 className="text-2xl font-semibold text-left">{quizData?.generatedQuiz?.quiz_details?.topic}<span className="text-gray-500 text-sm m-5"></span></h3>
+          <h3 className="text-2xl font-semibold text-left">{quizData?.title || "Untitled Quiz"}<span className="text-gray-500 text-sm m-5"></span></h3>
           <ul className="text-gray-600 mt-2 text-left">
             <li>• {quizData?.generatedQuiz?.quiz_details?.number_of_questions} questions</li>
             <li>• {quizData?.generatedQuiz?.quiz_details?.difficulty} difficulty</li>
@@ -117,9 +117,9 @@ const QuizSetting = () => {
 
         {/* Buttons */}
         <div className="mt-6 flex justify-center space-x-4">
-          <button className="px-3 md:px-7 py-2 font-semibold bg-gray-50 text-gray-700 text-xs lg:text-lg rounded-lg" onClick={()=> navigate('/')}>Save as Draft</button>
-          <button className="px-3 md:px-7 py-2 font-semibold bg-gray-50 text-gray-700 text-xs lg:text-lg rounded-lg" onClick={()=> navigate('/review-quiz')}>Back to Questions</button>
-          <button className="px-3 md:px-7 py-2 font-semibold bg-black text-white text-xs lg:text-lg rounded-lg" onClick={publishQuiz}>Publish Quiz</button>
+          <button className="px-3 md:px-7 py-2 font-semibold bg-white text-gray-700 hover:bg-black hover:text-white text-xs lg:text-lg rounded-lg" onClick={()=> navigate('/')}>Save as Draft</button>
+          <button className="px-3 md:px-7 py-2 font-semibold bg-white text-gray-700 hover:bg-black hover:text-white text-xs lg:text-lg rounded-lg" onClick={()=> navigate('/review-quiz')}>Back to Questions</button>
+          <button className="px-3 md:px-7 py-2 font-semibold bg-white text-gray-700 hover:bg-black hover:text-white text-xs lg:text-lg rounded-lg" onClick={publishQuiz}>Publish Quiz</button>
         </div>
         </div>
       </div>

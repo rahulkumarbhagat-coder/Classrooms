@@ -65,7 +65,11 @@ const StudentDashboard = () => {
       {/* Upcoming Quizzes Section */}
       <div>
         <h2 className="text-xl font-semibold mb-2">Upcoming Quizzes</h2>
-        <div className="bg-white p-6 rounded-xl shadow-md flex flex-col min-h-40">
+        <div className="bg-white p-6 rounded-xl shadow-md flex flex-col min-h-80">
+          {!allClassQuizzes.length > 0 ?
+          <div className="w-20 h-20 self-center border-4 border-white border-t-green-700 border-r-green-700 border-b-green-700 rounded-full animate-spin"></div>
+          :
+          <> 
           {allClassQuizzes?.map((classQuiz, classIndex) =>(
             <div key={classIndex} className="flex flex-col gap-4">
             {classQuiz?.map((quiz, quizIndex)=>(
@@ -73,7 +77,7 @@ const StudentDashboard = () => {
                   <div className="flex items-center space-x-2 mb-2">
             <span className="text-gray-500">⏺</span>
             <h3 className="text-lg font-semibold cursor-pointer" onClick={()=> handleClick(quiz)}>
-              {quiz?.generatedQuiz?.quiz_details?.topic}
+              {quiz?.title}
             </h3>
           </div>
           <p className="text-gray-600">Math 101</p>
@@ -86,6 +90,10 @@ const StudentDashboard = () => {
           ))}
         </div>
           ))}
+          </>
+        }
+          
+          
           
         </div>
       </div>

@@ -110,7 +110,7 @@ const Dashboard = ({classes}) => {
                   <div key={index} className={`p-4 bg-gray-${quiz.status==='active'? '100': '600'} rounded-lg shadow-md mt-2 lg:h-25 flex flex-col md:flex-row gap-3 justify-start items-start md:justify-between md:items-center`}>
                     <div className='flex flex-col md:flex-row gap-3 md:items-center'>
                       <div className="flex flex-col md:flex-row gap-2 md:items-center font-semibold">
-                        <p className={`font-semibold cursor-pointer text-${quiz.status==='active'? 'gray-600': 'white'} text-left md:w-35`} onClick={()=> handleClick(quiz)}>{(quiz?.generatedQuiz?.quiz_details?.topic.trim()) || "Untitled Quiz"}</p>
+                        <p className={`font-semibold cursor-pointer text-${quiz.status==='active'? 'gray-600': 'white'} text-left md:w-35`} onClick={()=> handleClick(quiz)}>{(quiz?.title) || "Untitled Quiz"}</p>
                         <span className="text-xs bg-gray-300 text-gray-700 md:mx-5 px-2 py-1 w-15 h-6 rounded">{quiz.status}</span>
                       </div>
                       

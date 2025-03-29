@@ -23,7 +23,7 @@ const EditQuestionModal = ({ isOpen, onClose, question, onSave }) => {
   return (
     <div>
       <div className="fixed inset-0 flex items-center justify-center z-95 backdrop-blur-xs shadow-2xl overflow-y-scroll">
-        <div className="bg-gray-100 p-6 rounded-2xl max-w-lg md:max-w-xl lg:max-w-2xl mx-4 md:mx-0">
+        <div className="bg-gray-100 p-6 rounded-2xl w-lg md:w-xl lg:w-2xl mx-4 md:mx-0">
           <h2 className="text-lg md:text-2xl font-bold mb-4">Edit Question</h2>
 
           {/* Question Input */}
@@ -39,7 +39,7 @@ const EditQuestionModal = ({ isOpen, onClose, question, onSave }) => {
 
           {/* Options Editing */}
           <label className="block text-gray-700 text-sm font-bold mb-2">
-            {editedQuestion?.question_type === 'MCQ' ? 'Answer Options' : ''}
+            {editedQuestion?.question_type === 'MCQ' || editedQuestion?.question_type === 'Multiple Choice' ? 'Answer Options' : ''}
           </label>
           <div className="space-y-1 md:space-y-2">
             {editedQuestion.options?.map((option, index) => (
@@ -54,7 +54,7 @@ const EditQuestionModal = ({ isOpen, onClose, question, onSave }) => {
           </div>
 
           {/* Answer Editing */}
-          {editedQuestion.question_type !== 'Written' && <div >
+          {(editedQuestion.question_type !== 'Written' && editedQuestion.question_type !== 'Essay' && editedQuestion.question_type !== 'Short Answer') && <div >
           <label
             className="block text-gray-700 text-sm font-bold m-2"
             htmlFor="answer"

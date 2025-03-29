@@ -11,14 +11,11 @@ const QuizHistory = () => {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     const userQuiz = await response.json();
-    setUserQuiz(prev =>[
-      ...prev,
-      userQuiz
-    ]);
+    setUserQuiz((prev) => [...prev, userQuiz]);
     console.log(userQuiz);
   };
 
@@ -31,27 +28,41 @@ const QuizHistory = () => {
       <div className="w-full md:w-[77%]">
         <div className="p-6 flex flex-col gap-6">
           <h2 className="text-2xl font-semibold mb-2">Your Quizzes</h2>
-        <div className="bg-white p-6 rounded-xl shadow-md flex flex-col min-h-40">
-          {userQuiz? userQuiz?.map((quiz, index) => (
-            <div key={index} className="flex flex-col gap-2 text-left">
-              <div className="flex flex-col md:flex-row items-center space-x-2 mb-2">
-                
-                <h3 className="text-lg font-semibold cursor-pointer"><span className="text-gray-500 mr-1">⏺</span>{quiz?.generatedQuiz?.quiz_details?.topic}</h3>
-                <p>{quiz?.generatedQuiz?.quiz_details?.difficulty} Difficulty |</p>
-                <p>{quiz?.generatedQuiz?.quiz_details?.number_of_questions} Questions |</p>
-                <p>Type : {quiz?.generatedQuiz?.quiz_details?.type}</p>
-              </div>
+          <div className="bg-white p-6 rounded-xl shadow-md flex flex-col min-h-40">
+            {!userQuiz.length > 0 ? (
+              <div className="w-20 h-20 self-center border-4 border-white border-t-green-700 border-r-green-700 border-b-green-700 rounded-full animate-spin"></div>
+            ) : (
+              <>
+                {userQuiz?.map((quiz, index) => (
+                  <div key={index} className="flex flex-col gap-2 text-left">
+                    <div className="flex flex-col md:flex-row items-center space-x-2 mb-2">
+                      <h3 className="text-lg font-semibold cursor-pointer">
+                        <span className="text-gray-500 mr-1">⏺</span>
+                        {quiz?.generatedQuiz?.quiz_details?.topic}
+                      </h3>
+                      <p>
+                        {quiz?.generatedQuiz?.quiz_details?.difficulty}{" "}
+                        Difficulty |
+                      </p>
+                      <p>
+                        {quiz?.generatedQuiz?.quiz_details?.number_of_questions}{" "}
+                        Questions |
+                      </p>
+                      <p>Type : {quiz?.generatedQuiz?.quiz_details?.type}</p>
+                    </div>
 
-              <p className="text-gray-600">Math 101</p>
-              <div className="flex items-center text-gray-500 text-sm mt-2">
-                <span className="mr-4">📅 Due: January 2, 2025</span>
-                <span>⏳ 20 min</span>
-              </div>
-              <hr className="text-gray-400 my-3" />
-            </div>
-          )): <p>Loading...</p>}
+                    <p className="text-gray-600">Math 101</p>
+                    <div className="flex items-center text-gray-500 text-sm mt-2">
+                      <span className="mr-4">📅 Due: January 2, 2025</span>
+                      <span>⏳ 20 min</span>
+                    </div>
+                    <hr className="text-gray-400 my-3" />
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
         </div>
-        </div>  
       </div>
     </div>
   );
