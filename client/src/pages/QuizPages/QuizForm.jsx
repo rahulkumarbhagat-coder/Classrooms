@@ -23,8 +23,8 @@ const QuizForm = () => {
         detailedTopic: "",
         difficulty: "Medium",
         questionTypes: ["Multiple Choice"],
-        numQuestions: 10,
-        timeLimit: 20,
+        numQuestions: 5,
+        timeLimit: 2,
         pointsPerQuestion: 1,
       });
 
@@ -33,6 +33,8 @@ const QuizForm = () => {
 
         try {
           console.log(quizData);
+            const title = quizData.title
+            const description = quizData.description
             const topic = `${quizData.topic}, ${quizData.detailedTopic}`;
             const difficulty = quizData.difficulty;
             const type = quizData.questionTypes;
@@ -47,6 +49,8 @@ const QuizForm = () => {
             const userInput = new FormData()
             userInput.append("image", image)
             userInput.append("topic", topic)
+            userInput.append("title", title)
+            userInput.append("descrption", description)
             userInput.append("difficulty", difficulty)
             userInput.append("type", type)
             userInput.append("noOfQuestions", questions)
@@ -83,7 +87,7 @@ const QuizForm = () => {
                 setTimeout(()=>{
                 setLoading(false)
                 setImage(false)
-                navigate(`/quiz-setting`)
+                navigate(`/review-quiz`)
                 }, 500)
                 
             }
