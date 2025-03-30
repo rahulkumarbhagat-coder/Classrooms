@@ -1,19 +1,8 @@
-import React from 'react'
 import { useAuth } from "../utils/authUtils";
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   const { userData } = useAuth();
-
-  const navigate = useNavigate();
-
-  const handleNavigate = () => {
-    if(userData.isTeacher) {
-      return navigate(`/teacher/${userData.user?.uid}`);
-    } else {
-      navigate(`/student/${userData.user?.uid}`);
-    }
-  }
 
   return (
     <div className='flex flex-col-reverse md:flex-row justify-between'>
@@ -33,10 +22,10 @@ const Header = () => {
       <div className="flex gap-5 w-[70vw] h-20 md:h-full md:w-[30vw] lg:w-[20vw] self-end justify-end items-center">
           <div className="flex items-center bg-white p-3 rounded-lg shadow-2xl">
             <div className="w-12 h-12 bg-gray-300 rounded-full flex justify-center items-center"><img src="Frame (3).svg" alt="" /></div>
-            <div className="ml-3 text-left hover:cursor-pointer" onClick={handleNavigate}>
+            <Link to="/" className="ml-3 text-left hover:cursor-pointer">
               <p className="font-bold">{userData.user ? (<>{userData.firstName} {userData.lastName}</>) : ("Guest")}</p>
               <p className="text-sm text-gray-500">{userData.isTeacher ? ("Teacher") : ("Student")}</p>
-            </div>
+            </Link>
             <img src="weui_arrow-filled.svg" alt="" className="self-end"/>
           </div>
           <div className="rounded-full shadow-2xl w-10 h-10 bg-white self-start flex justify-center items-center"><img src="Frame (4).svg" alt="" /></div>
