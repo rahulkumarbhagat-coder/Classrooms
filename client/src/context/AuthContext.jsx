@@ -219,7 +219,7 @@ export const AuthProvider = ({ children }) => {
                 quizzes: [],
                 showAccountTypeModal: false
             }));
-            window.location.reload();
+            window.location.href = '/login';
         }).catch((error) => {
             console.error('Logout error:', error);
         });
