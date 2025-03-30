@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useClassroom } from '../../utils/classroomUtils';
 import { useAuth } from '../../utils/authUtils';
+import { Link } from 'react-router-dom';
 
 const ClassroomDashboard = () => {
     const { id } = useParams();
@@ -16,14 +17,6 @@ const ClassroomDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [classroom, setClassroom] = useState(null);
     const [students, setStudents] = useState([]);
-
-    const handleNavigate = () => {
-        if(userData.isTeacher) {
-          return navigate(`/teacher/${userData.user?.uid}`);
-        } else {
-          navigate(`/student/${userData.user?.uid}`);
-        }
-      }
 
     // Find the current classroom from context based on ID
     useEffect(() => {
@@ -213,10 +206,10 @@ const ClassroomDashboard = () => {
                         <div className="w-12 h-12 bg-gray-300 rounded-full flex justify-center items-center">
                             <img src="/Frame (3).svg" alt="" />
                         </div>
-                        <div className="ml-3 text-left hover:cursor-pointer" onClick={handleNavigate}>
+                        <Link to="/" className="ml-3 text-left hover:cursor-pointer">
                             <p className="font-bold">{userData.user ? (<>{userData.firstName} {userData.lastName}</>) : ("Guest")}</p>
                             <p className="text-sm text-gray-500">{userData.isTeacher ? ("Teacher") : ("Student")}</p>
-                        </div>
+                        </Link>
                         <img src="/weui_arrow-filled.svg" alt="" className="ml-2"/>
                     </div>
                 </div>

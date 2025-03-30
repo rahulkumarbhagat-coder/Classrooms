@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Header from "../components/Header";
 import Dashboard from "../components/Dashboard";
 import { useAuth } from '../utils/authUtils';
