@@ -8,7 +8,7 @@ export const ClassroomProvider = ({ children }) => {
         throw new Error('ClassroomProvider requires a children prop');
     }
 
-const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
     const { userData } = useAuth();
 
@@ -32,7 +32,7 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
 
         try {
             const token = await userData.user.getIdToken();
-            const response = await fetch(`${BASE_URL}class/user-classrooms`, {
+            const response = await fetch(`${BASE_URL}/class/user-classrooms`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
 
         try {
             const token = await userData.user.getIdToken();
-            const response = await fetch(`${BASE_URL}class/new-classroom`, {
+            const response = await fetch(`${BASE_URL}/class/new-classroom`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -132,7 +132,7 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
                 throw new Error('You are already a member of this classroom');
             }
             const token = await userData.user.getIdToken();
-            const response = await fetch(`${BASE_URL}class/join-classroom`, {
+            const response = await fetch(`${BASE_URL}/class/join-classroom`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -177,7 +177,7 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
 
         try {
             const token = await userData.user.getIdToken();
-            const response = await fetch(`${BASE_URL}class/update-classroom/${classroomId}`, {
+            const response = await fetch(`${BASE_URL}/class/update-classroom/${classroomId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -226,7 +226,7 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
 
         try {
             const token = await userData.user.getIdToken();
-            const response = await fetch(`${BASE_URL}class/delete-classroom/${classroomId}`, {
+            const response = await fetch(`${BASE_URL}/class/delete-classroom/${classroomId}`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -272,7 +272,7 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
     
         try {
             const token = await userData.user.getIdToken();
-            const response = await fetch(`${BASE_URL}class/remove-student`, {
+            const response = await fetch(`${BASE_URL}/class/remove-student`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -11,7 +11,7 @@ const ClassroomDashboard = () => {
     const { classroomData, updateClassroom, generateInviteCode, deleteClassroom, removeStudentFromClassroom } = useClassroom();
     const { userData } = useAuth();
 
-    const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
+    const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
     const [activeTab, setActiveTab] = useState('overview');
     const [loading, setLoading] = useState(true);
@@ -46,7 +46,7 @@ const ClassroomDashboard = () => {
                 const studentIds = classroom.students;
                 
                 // Call your API endpoint to get student details by IDs
-                const response = await fetch(`${BASE_URL}class/students-in-class`, {
+                const response = await fetch(`${BASE_URL}/class/students-in-class`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
