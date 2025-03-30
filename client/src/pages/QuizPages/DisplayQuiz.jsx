@@ -77,16 +77,29 @@ const DisplayQuiz = () => {
     navigate("/display-result");
     try {
       let score = 0;
+      let updateAnswer = [...quizData?.generatedQuiz?.quiz_questions]
+      let hasUpdatedAnswer = false
       let result = await Promise.all(
         quiz_questions.map(async (question) => {
           let isCorrect = false;
           const userAnswer = userAnswers[question.question_number];
           if (
-            question.question_type === "True/False" ||
             question.question_type === "MCQ"
           ) {
             isCorrect = question.answer === userAnswer;
-          } else if (question.question_type === "Written") {
+          }
+          else if (question.question_type === "True/False") {
+            if (question.answer.includes('True') && userAnswer.includes('True')) {
+              isCorrect = true
+            }
+            else if (question.answer.includes('False') && userAnswer.includes('False')) {
+              isCorrect = true
+            }
+            else{
+              isCorrect = false
+            }
+          }
+           else if (question.question_type === "Written" || question.question_type === "Short Answer" || question.question_type === "Essay") {
             const response = await fetch(`${BASE_URL}/quiz/check`, {
               method: "POST",
               headers: {
@@ -102,6 +115,18 @@ const DisplayQuiz = () => {
             });
             const result = await response.json();
             isCorrect = result.isCorrect;
+            
+            //update the answer parameter in quizData
+            updateAnswer = updateAnswer.map((previousQuestion) =>{
+              return previousQuestion.question_number === question.question_number ? 
+              ((hasUpdatedAnswer = true),
+              {
+                ...previousQuestion,
+                answer: result.correctAnswer
+              }) 
+              : previousQuestion
+            }
+          )
           }
 
           if (isCorrect) score++;
@@ -111,6 +136,23 @@ const DisplayQuiz = () => {
       );
 
       const token = await userData.user.getIdToken();
+      if (hasUpdatedAnswer) {
+        const updatedQuizAnswer = await fetch(`${BASE_URL}/quiz/update-quiz`, {
+          method: 'POST',
+          headers: {
+            "Content-type": "application/json",
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            quizId: quizData._id,
+            updatedQuizData: {
+              "generatedQuiz.quiz_questions": updateAnswer
+            }
+          })
+        })
+        const updatedQuiz = await updatedQuizAnswer.json()
+        newQuiz(updatedQuiz.updatedQuiz)
+      }
 
       //storing results in DB
       const response = await fetch(`${BASE_URL}/quiz/update-quiz`, {
@@ -204,7 +246,7 @@ const DisplayQuiz = () => {
               <label className="flex items-center text-lg cursor-pointer transform transition hover:scale-105 bg-gray-800 p-3 rounded-lg shadow-inner">
                 <input
                   onClick={() =>
-                    handleAnswerSelect(currentQuestion.question_number, "True")
+                    handleAnswerSelect(currentQuestion.question_number, 'Ture')
                   }
                   type="radio"
                   name={`q${currentQuestion.question_number}`}
@@ -216,7 +258,7 @@ const DisplayQuiz = () => {
               <label className="flex items-center text-lg cursor-pointer transform transition hover:scale-105 bg-gray-800 p-3 rounded-lg shadow-inner">
                 <input
                   onClick={() =>
-                    handleAnswerSelect(currentQuestion.question_number, "False")
+                    handleAnswerSelect(currentQuestion.question_number, 'False')
                   }
                   type="radio"
                   name={`q${currentQuestion.question_number}`}

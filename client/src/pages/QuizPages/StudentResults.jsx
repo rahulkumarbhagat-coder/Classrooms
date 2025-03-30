@@ -37,8 +37,7 @@ const QuizResults = () => {
                 <div className="flex flex-col items-start gap-5 ml-10">
                 <p className="text-sm text-gray-700">Your answer: <span className="font-semibold">{res.userAnswer}</span></p>
                 {!res.isCorrect && <p className="text-sm text-gray-700">Correct answer: <span className="font-semibold">
-                  {quizData?.generatedQuiz?.quiz_questions.find((question)=>question.question_text === res.question)?.answer ||
-                  quizData?.generatedQuiz?.quiz_questions.find((question)=>question.question_text === res.question)?.sample_answer
+                  {quizData?.generatedQuiz?.quiz_questions.find((question)=>question.question_text === res.question)?.answer
                   }</span></p>}
                 </div>
               </div>

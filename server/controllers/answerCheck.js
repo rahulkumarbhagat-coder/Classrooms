@@ -14,7 +14,7 @@ const model = genAI.getGenerativeModel({
     model: "gemini-2.0-flash",
   });
 
-const prompt = `Here is question and user's answer ${JSON.stringify(userAnswer)}, Tell if isCorrect and Score it out of ${JSON.stringify(totalMarks)}. Give response in JSON format`;
+const prompt = `Here is question and user's answer ${JSON.stringify(userAnswer)}, Tell if isCorrect, give correct answer if wrong and Score it out of ${JSON.stringify(totalMarks)}. Give response in JSON format`;
 console.log(prompt);
   try {
   const result = await model.generateContent(prompt);
