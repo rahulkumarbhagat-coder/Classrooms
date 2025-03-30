@@ -7,12 +7,15 @@ const ClassroomDashboard = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const { classroomData, updateClassroom, generateInviteCode, deleteClassroom } = useClassroom();
+    const { classroomData, updateClassroom, generateInviteCode, deleteClassroom, removeStudentFromClassroom } = useClassroom();
     const { userData } = useAuth();
+
+    const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
 
     const [activeTab, setActiveTab] = useState('overview');
     const [loading, setLoading] = useState(true);
     const [classroom, setClassroom] = useState(null);
+    const [students, setStudents] = useState([]);
 
     const handleNavigate = () => {
         if(userData.isTeacher) {
@@ -25,7 +28,6 @@ const ClassroomDashboard = () => {
     // Find the current classroom from context based on ID
     useEffect(() => {
         console.log("Classroom ID from params:", id);
-        console.log("Available classrooms:", classroomData.classrooms);
         
         if (classroomData.classrooms.length > 0) {
             const currentClass = classroomData.classrooms.find(
@@ -36,6 +38,47 @@ const ClassroomDashboard = () => {
             setLoading(false);
         }
     }, [classroomData.classrooms, id]);
+
+    // Fetch student details
+    useEffect(() => {
+        const fetchStudentDetails = async () => {
+            if (!classroom || !classroom.students || classroom.students.length === 0) {
+                setStudents([]);
+                return;
+            }
+
+            try {
+                setLoading(true);
+                const token = await userData.user.getIdToken();
+                const studentIds = classroom.students;
+                
+                // Call your API endpoint to get student details by IDs
+                const response = await fetch(`${BASE_URL}class/students-in-class`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ studentIds })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch student details');
+                }
+                
+                const studentDetails = await response.json();
+                console.log("Fetched student details:", studentDetails);
+                setStudents(studentDetails);
+            } catch (error) {
+                console.error("Error fetching student details:", error);
+                setStudents([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        fetchStudentDetails();
+    }, [classroom, userData.user, BASE_URL]);
 
     // Format date
     const formatDate = (dateString) => {
@@ -98,8 +141,8 @@ const ClassroomDashboard = () => {
     }
 
     const handleDelete = async () => {
-        window.confirm("Are you sure you want to delete this classroom?")
-        if(window.confirm) {
+        const isConfirmed = window.confirm("Are you sure you want to delete this classroom?")
+        if(isConfirmed) {
             deleteClassroom(classroom._id);
             navigate(`/teacher/${userData.user?.uid}`);
         }
@@ -120,6 +163,28 @@ const ClassroomDashboard = () => {
         } catch (error) {  
             console.error("Error generating new invite code:", error);
             alert('Error generating new invite code');
+        }
+    }
+
+    const removeStudent = async (studentId) => {    
+        const isConfirmed = window.confirm(
+            "Are you sure you want to remove this student from the classroom?"
+        );
+        
+        if (!isConfirmed) {
+            return;
+        }
+        
+        try {
+            await removeStudentFromClassroom(classroom._id, studentId);
+            
+            // Update local students state if needed
+            setStudents(prev => prev.filter(student => student._id !== studentId));
+            
+            // Show success message
+            alert('Student removed successfully');
+        } catch (error) {
+            alert(`Error removing student: ${error.message}`);
         }
     }
     
@@ -161,26 +226,26 @@ const ClassroomDashboard = () => {
             <div className="px-6">
                 <div className="flex border-b border-gray-300">
                     <button 
-                        className={`px-4 py-2 font-medium ${activeTab === 'overview' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-gray-800'}`}
+                        className={`px-4 py-2 font-medium ${activeTab === 'overview' ? 'text-black border-b-2 border-black' : 'text-gray-600 hover:text-gray-800 hover:cursor-pointer'}`}
                         onClick={() => setActiveTab('overview')}
                     >
                         Overview
                     </button>
                     <button 
-                        className={`px-4 py-2 font-medium ${activeTab === 'students' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-gray-800'}`}
+                        className={`px-4 py-2 font-medium ${activeTab === 'students' ? 'text-black border-b-2 border-black' : 'text-gray-600 hover:text-gray-800 hover:cursor-pointer'}`}
                         onClick={() => setActiveTab('students')}
                     >
                         Students
                     </button>
                     <button 
-                        className={`px-4 py-2 font-medium ${activeTab === 'quizzes' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-gray-800'}`}
+                        className={`px-4 py-2 font-medium ${activeTab === 'quizzes' ? 'text-black border-b-2 border-black' : 'text-gray-600 hover:text-gray-800 hover:cursor-pointer'}`}
                         onClick={() => setActiveTab('quizzes')}
                     >
                         Quizzes
                     </button>
                     {userData.isTeacher && (
                         <button 
-                            className={`px-4 py-2 font-medium ${activeTab === 'settings' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600 hover:text-gray-800'}`}
+                            className={`px-4 py-2 font-medium ${activeTab === 'settings' ? 'text-black border-b-2 border-black' : 'text-gray-600 hover:text-gray-800 hover:cursor-pointer'}`}
                             onClick={() => setActiveTab('settings')}
                         >
                             Settings
@@ -215,7 +280,7 @@ const ClassroomDashboard = () => {
                                         <div className="flex items-center mt-1">
                                             <span className="font-mono bg-gray-100 px-3 py-1 rounded">{classroom.inviteCode}</span>
                                             <button 
-                                                className="ml-2 text-blue-600 hover:text-blue-800"
+                                                className="ml-2 text-black hover:text-gray-400 hover:cursor-pointer"
                                                 onClick={() => {
                                                     navigator.clipboard.writeText(classroom.inviteCode);
                                                 }}>
@@ -225,7 +290,7 @@ const ClassroomDashboard = () => {
                                                 </svg>
                                             </button>
                                             <button 
-                                                className="ml-2 text-blue-600 hover:text-blue-800"
+                                                className="ml-2 text-black hover:text-gray-400 hover:cursor-pointer"
                                                 onClick={generateNewInviteCode}>
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                                     <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
@@ -290,9 +355,6 @@ const ClassroomDashboard = () => {
                                                 Student
                                             </th>
                                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                                Joined Date
-                                            </th>
-                                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                                 Quizzes Completed
                                             </th>
                                             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -306,7 +368,7 @@ const ClassroomDashboard = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="bg-white divide-y divide-gray-200">
-                                        {classroom.students.map((student, index) => (
+                                        {students.map((student, index) => (
                                             <tr key={student._id || index}>
                                                 <td className="px-6 py-4 whitespace-nowrap">
                                                     <div className="flex items-center">
@@ -322,10 +384,6 @@ const ClassroomDashboard = () => {
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                    {/* Replace with actual join date if available */}
-                                                    {formatDate(new Date())}
-                                                </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                     {/* Replace with actual quiz data when available */}
                                                     0/0
                                                 </td>
@@ -335,8 +393,11 @@ const ClassroomDashboard = () => {
                                                 </td>
                                                 {userData.isTeacher && (
                                                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                        <button className="text-blue-600 hover:text-blue-900 mr-3">View</button>
-                                                        <button className="text-red-600 hover:text-red-900">Remove</button>
+                                                        <button 
+                                                            onClick={() => removeStudent(student._id)}
+                                                            className="text-red-600 hover:text-red-900 hover:cursor-pointer">
+                                                                Remove
+                                                        </button>
                                                     </td>
                                                 )}
                                             </tr>
@@ -497,7 +558,9 @@ const ClassroomDashboard = () => {
                                 <button
                                     type="submit"
                                     className="bg-black text-white px-6 py-2 rounded-md font-medium hover:bg-gray-800 hover:cursor-pointer"
-                                >
+                                    style={{ 
+                                        boxShadow: "0 -1px 4px rgba(0, 0, 0, 0.05), 0 4px 12px rgba(0, 0, 0, 0.15)"
+                                    }}>
                                     Save Changes
                                 </button>
                             </div>
@@ -507,11 +570,11 @@ const ClassroomDashboard = () => {
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Regenerate Invite Code</label>
                             <div className="flex items-center">
-                                <span className="font-mono bg-gray-100 px-3 py-2 rounded mr-2">{classroom.inviteCode}</span>
+                                <span className="font-mono bg-gray-200 px-3 py-2 rounded mr-2">{classroom.inviteCode}</span>
                                 <button 
                                     type="button"
                                     onClick={generateNewInviteCode}
-                                    className="px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 hover:cursor-pointer">
+                                    className="px-3 py-2 bg-black text-white rounded hover:bg-gray-500 hover:cursor-pointer">
                                     Regenerate
                                 </button>
                             </div>

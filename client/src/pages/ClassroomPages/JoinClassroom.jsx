@@ -28,8 +28,8 @@ function JoinClassroom() {
         try {
             const inviteCode = e.target.elements.inviteCode.value.trim();
             const joinedClass = await joinClassroom(inviteCode);
-            window.confirm(`You have joined the class ${joinedClass.className}!`);
-            if(window.confirm) {
+            const isConfirmed = window.confirm(`You have joined the class ${joinedClass.className}!`);
+            if(isConfirmed) {
                 navigate(`/classroom/${joinedClass._id}`); 
             }
         } catch (err) {

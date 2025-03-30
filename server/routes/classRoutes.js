@@ -214,3 +214,75 @@ classRouter.delete('/delete-classroom/:id', authMiddleware, async(req, res) => {
         res.status(500).json({ error: 'Error deleting classroom' });
     }
 });
+
+// Get students by IDs
+classRouter.post('/students-in-class', authMiddleware, async(req,res) => {
+    try {
+        // First check if the requesting user is a teacher
+        const { uid } = req.user;
+        const teacher = await User.findOne({ firebaseUid: uid });
+        
+        if(!teacher || !teacher.isTeacher) {
+            return res.status(403).json({ error: 'Unauthorized access' });
+        }
+        
+        // Get the array of student IDs from the request body
+        const { studentIds } = req.body;
+        
+        if(!studentIds || !Array.isArray(studentIds)) {
+            return res.status(400).json({ error: 'Valid student IDs array required' });
+        }
+        
+        // Fetch all users matching those IDs
+        const students = await User.find({ _id: { $in: studentIds } }).select('-password');
+        
+        res.status(200).json(students);
+    } catch (error) {
+        console.error('Error fetching students:', error);
+        res.status(500).json({error: 'Error fetching students'});
+    }
+});
+
+// Remove student from classroom
+classRouter.post('/remove-student', authMiddleware, async(req, res) => {
+    try {
+      const { classroomId, studentId } = req.body;
+      const teacherId = req.user.uid;
+      
+      // Validate input
+      if (!classroomId || !studentId) {
+        return res.status(400).json({ error: 'Classroom ID and student ID are required' });
+      }
+      
+      // Find the classroom
+      const classroom = await Classroom.findById(classroomId);
+      
+      if (!classroom) {
+        return res.status(404).json({ error: 'Classroom not found' });
+      }
+      
+      // Verify teacher owns this classroom
+      if (!classroom.teachers.includes(teacherId)) {
+        return res.status(403).json({ error: 'Not authorized to modify this classroom' });
+      }
+      
+      // Remove student from classroom
+      classroom.students = classroom.students.filter(
+        id => id.toString() !== studentId
+      );
+      
+      // Save updated classroom
+      await classroom.save();
+      
+      // Return updated classroom
+      const updatedClassroom = await Classroom.findById(classroomId)
+        .populate('students')
+        .populate('quizzes');
+        
+      res.status(200).json(updatedClassroom);
+      
+    } catch (error) {
+      console.error('Error removing student:', error);
+      res.status(500).json({ error: 'Error removing student from classroom' });
+    }
+  });

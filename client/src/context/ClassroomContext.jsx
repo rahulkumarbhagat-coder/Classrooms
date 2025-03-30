@@ -262,6 +262,55 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
         }
     };
 
+    const removeStudentFromClassroom = async (classroomId, studentId) => {
+        if (!userData.user) return;
+    
+        setClassroomData(prev => ({
+            ...prev,
+            loading: true
+        }));
+    
+        try {
+            const token = await userData.user.getIdToken();
+            const response = await fetch(`${BASE_URL}class/remove-student`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ classroomId, studentId })
+            });
+    
+            if (!response.ok) {
+                throw new Error('Failed to remove student from classroom');
+            }
+    
+            const updatedClassroom = await response.json();
+            
+            // Update classrooms array and currentClassroom
+            setClassroomData(prev => ({
+                ...prev,
+                classrooms: prev.classrooms.map(classroom => 
+                    classroom._id === classroomId ? updatedClassroom : classroom
+                ),
+                currentClassroom: prev.currentClassroom?._id === classroomId 
+                    ? updatedClassroom 
+                    : prev.currentClassroom,
+                loading: false
+            }));
+    
+            return updatedClassroom;
+        } catch (error) {
+            console.error("Error removing student:", error);
+            setClassroomData(prev => ({
+                ...prev,
+                error: error.message,
+                loading: false
+            }));
+            throw error;
+        }
+    };
+
     // Load classrooms when user auth changes
     useEffect(() => {
         if (userData.user && !userData.loading) {
@@ -293,6 +342,7 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000/";
             joinClassroom,
             updateClassroom,
             deleteClassroom,
+            removeStudentFromClassroom,
         }}>
             {children}
         </ClassroomContext.Provider>
