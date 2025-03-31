@@ -67,7 +67,7 @@ const StudentDashboard = () => {
         <h2 className="text-xl font-semibold mb-2">Upcoming Quizzes</h2>
         <div className="bg-white p-6 rounded-xl shadow-md flex flex-col min-h-80">
           {!allClassQuizzes.length > 0 ?
-          <div className="w-20 h-20 self-center border-4 border-white border-t-green-700 border-r-green-700 border-b-green-700 rounded-full animate-spin"></div>
+          <div className="w-20 h-20 self-center border-4 border-white whitespace-nowrap"><p>No Quiz Available</p></div>
           :
           <> 
           {allClassQuizzes?.map((classQuiz, classIndex) =>(

@@ -48,7 +48,6 @@ const ReviewQuiz = () => {
         body: JSON.stringify(updatedQuiz)
       })
       const result = await response.json()
-      console.log("Updated Question:", result);
       setIsOpen(false);
       getAllQuiz()
       newQuiz(result.updatedQuiz)

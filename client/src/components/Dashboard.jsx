@@ -55,7 +55,6 @@ const Dashboard = ({classes = []}) => { // Default to empty array
         body: JSON.stringify({id})
       })
       const result = await response.json()
-      console.log(result);
       getAllQuiz() 
     }
 

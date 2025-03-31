@@ -32,7 +32,6 @@ const QuizForm = () => {
         e.preventDefault();
 
         try {
-          console.log(quizData);
             const title = quizData.title
             const description = quizData.description
             const topic = `${quizData.topic}, ${quizData.detailedTopic}`;
@@ -77,7 +76,6 @@ const QuizForm = () => {
             }
 
             const quiz = await response.json()
-            console.log(quiz);
             newQuiz(quiz)
 
             clearInterval(loadingInterval)
